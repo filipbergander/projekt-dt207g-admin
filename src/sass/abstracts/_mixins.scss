@@ -18,3 +18,26 @@
         background-color: white;
     }
 }
+
+@mixin admin-btn($btn-color-primary, $color-text) {
+    color: $color-text;
+    background-color: $btn-color-primary;
+    font-weight: bold;
+    box-shadow: 0 0 8px 1px black;
+    cursor: pointer;
+    padding: 1.5em 1em;
+    border-radius: 12px;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    border: none;
+    justify-content: center;
+    transition: 0.3s ease;
+    gap: 0.5em;
+    &:hover {
+        opacity: 0.8;
+    }
+    &:active {
+        background-color: rgb(1, 139, 8);
+    }
+}

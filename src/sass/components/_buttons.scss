@@ -9,13 +9,57 @@
 
 #logout-button {
     font-weight: bold;
+    color: white;
     cursor: pointer;
     border: none;
     background: none;
     transition: 0.2s ease;
     font-size: 1.3em;
     &:hover {
-        color: rgb(116, 114, 114);
-        text-decoration: underline;
+        color: $link-color;
+        transform: scale(1.1);
+    }
+}
+
+#register-user-btn {
+    @include button($btn-color-secondary, $color-text-light);
+    &:hover {
+        opacity: 1.1;
+    }
+}
+
+.cta-btn-booking {
+    @include admin-btn($btn-color-cta, $color-text-light);
+}
+
+.cta-btn-lunch {
+    @include admin-btn($btn-color-lunch, $color-text-light);
+}
+
+.cta-btn-dinner {
+    @include admin-btn($btn-color-dinner, $color-text-light);
+}
+
+.cta-btn-review {
+    @include admin-btn($btn-color-review, $color-text-light);
+}
+
+@media screen and (max-width: 768px) {
+    #logout-button {
+        font-size: 1.1em;
+        &:hover {
+            color: $link-color;
+            transform: scale(1.1);
+        }
+    }
+}
+
+@media screen and (max-width: 380px) {
+    #logout-button {
+        font-size: 1em;
+        &:hover {
+            color: $link-color;
+            transform: scale(1.1);
+        }
     }
 }

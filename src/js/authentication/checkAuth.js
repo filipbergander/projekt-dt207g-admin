@@ -5,7 +5,7 @@ export function checkAuthAccess() {
     const adminUser = document.getElementById("admin-user");
 
     // Går inte att navigera till admin-sidan om användaren inte är inloggad
-    if (window.location.pathname.endsWith("index.html") && !localStorage.getItem("login-key")) {
+    if (window.location.pathname.endsWith("index.html") && !localStorage.getItem("login-key") && !localStorage.getItem("role") && !localStorage.getItem("username")) {
         adminUser.innerHTML = "";
         window.location.href = "login.html"; // Redirect till login-sidan
     };

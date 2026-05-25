@@ -4,5 +4,11 @@ main {
     max-width: 1240px;
     margin: 0 auto;
     text-align: center;
-    padding: 4em;
+    padding: 2em;
+}
+
+.admin-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2em;
 }
