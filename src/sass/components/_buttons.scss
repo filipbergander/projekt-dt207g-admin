@@ -6,3 +6,16 @@
         background-color: #0d52b9;
     }
 }
+
+#logout-button {
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: 0.2s ease;
+    font-size: 1.3em;
+    &:hover {
+        color: rgb(116, 114, 114);
+        text-decoration: underline;
+    }
+}

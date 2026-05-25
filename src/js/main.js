@@ -5,6 +5,12 @@ const url = "http://localhost:3000";
 document.addEventListener("DOMContentLoaded", () => {
 
     initLoginForm();
+    logoutUser();
+
+    // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
+    if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
+        displayUserUi();
+    }
 
 });
 
@@ -69,6 +75,7 @@ async function loginUser() {
         const data = await response.json(); // Väntar på responsen tillbaka
         const token = data.response.token; // Token utifrån data
         const username = data.response.user.username; // Användarnamnet från backend
+        const userRole = data.response.user.role;
         // Om token inte finns inom responsen så går inte inloggningen igenom
         if (!response.ok || !token) {
             document.getElementById("login-spinner").classList.add("hidden"); // Döljer ikonen vid misslyckad respons
@@ -82,11 +89,12 @@ async function loginUser() {
         successMsg.push("Loggar in användare") // Meddelande i DOM att inloggningen gick bra
         displaySuccessMsg(successMsg); // Visar att inloggningen lyckades i DOM
         localStorage.setItem("username", username); // Sparar användarnamnet i localstorage
+        localStorage.setItem("role", userRole); // Sparar användarnamnet i localstorage
         // Liten delay innan redirect för att hinna spara token i localstorage och visa laddningsikon en kort stund
         setTimeout(() => {
             document.getElementById("login-spinner").classList.add("hidden"); // Döljer ikonen efter redirect
             successMsgList.innerHTML = "";
-            window.location.href = "admin.html";
+            window.location.href = "index.html";
         }, 1200);
     } catch (error) {
         console.error("Kunde inte logga in användaren: ", error);
@@ -120,4 +128,35 @@ function displaySuccessMsg(successMsg) {
     const liEl = document.createElement("li");
     liEl.textContent = successMsg;
     successMsgList.appendChild(liEl);
+}
+
+// Lägger till användarnamn inom UI för inläggs-sidan
+function displayUserUi() {
+
+    const role = localStorage.getItem("role");
+    const adminUser = document.getElementById("admin-user"); // Elemenent inom HTML
+    const usernameKey = localStorage.getItem("username"); // Hämtar användarnamn
+    // Om det finns användarnamn sparat
+    if (localStorage.getItem("login-key")) {
+        // Struktur med meddelande
+        adminUser.innerHTML = `
+        <p> Inloggad som ${role}: <span class="user-span">${usernameKey} </span></p>
+        <p>Vad vill du göra?</p>
+        `;
+    } else { // Annars tomt
+        adminUser.innerHTML = "";
+    }
+}
+// Loggar ut användare
+function logoutUser() {
+    const logoutBtn = document.getElementById("logout-button");
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("login-key");
+            localStorage.removeItem("username");
+            localStorage.removeItem("role");
+            window.location.href = "login.html";
+        });
+    }
 }
