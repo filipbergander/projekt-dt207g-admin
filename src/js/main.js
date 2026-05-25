@@ -6,6 +6,7 @@ const url = "http://localhost:3000";
 document.addEventListener("DOMContentLoaded", () => {
 
     initLoginForm();
+    initRegisterForm();
     logoutUser();
     checkAuthAccess();
 
@@ -49,6 +50,45 @@ function initLoginForm() {
             }
         });
     }
+}
+
+// Lyssnar på ändringar som görs i formuläret, visar felmeddelanden i DOM och anropar funktionen för att skapa en ny användare
+function initRegisterForm() {
+    // Formuläret med knapp för att registrera en ny användare
+    const registerForm = document.getElementById("register-form");
+    const registerBtn = document.getElementById("register-user-btn");
+
+    // Eventlyssnare för registreringsformuläret
+    if (registerForm) {
+        registerForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            let errors = [];
+
+            // Hämtar värden inom registreringsformuläret
+            const registerEmail = document.getElementById("register-email").value.trim();
+            const registerPassword = document.getElementById("register-password").value.trim();
+            const registerUsername = document.getElementById("register-username").value.trim();
+            const registerRole = document.getElementById("register-role").value.trim();
+
+            // Specifika felmeddelande för inputs
+            if (registerEmail === "") errors.push("Du måste fylla i email!");
+            if (registerPassword === "") {
+                errors.push("Du måste fylla i lösenord!")
+            } else if (registerPassword.length < 6) {
+                errors.push("Lösenordet måste vara minst 6 tecken!");
+            }
+            if (registerUsername === "") errors.push("Du måste fylla i användarnamn!");
+
+            // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
+            if (errors.length > 0) {
+                displayErrorMsg(errors);
+                return; // Stoppar formuläret från att bli submittat
+            } else { // Annars om inga felmeddelanden finns, anropas createUser
+                createUser();
+            }
+        });
+    }
+
 }
 
 // För att logga in en användare
@@ -110,6 +150,66 @@ async function loginUser() {
     }
 }
 
+// För att skapa en ny användare
+async function createUser() {
+
+    const emailInput = document.getElementById("register-email");
+    const passwordInput = document.getElementById("register-password");
+    const usernameInput = document.getElementById("register-username");
+    const roleInput = document.getElementById("register-role");
+
+    // Inputs inom formuläret 
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const username = usernameInput.value.trim();
+    const role = roleInput.value.trim();
+
+    const registerForm = document.getElementById("register-form");
+    const errorMsgList = document.querySelector(".error-message ul"); // Felmeddelanden
+    const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+    successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
+
+    let errors = [];
+    let successMsg = [];
+    // Skapar en ny användare genom routen i backend
+    try {
+        const response = await fetch(`${url}/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, email, password, role })
+        });
+        const data = await response.json();
+        // Vid misslyckat resultat
+        if (!response.ok) {
+            document.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
+            const BackendError = data.error || "Kunde inte skapa en ny användare..."; // Felmeddelande från backend eller vanligt
+            showError(BackendError); // Visar felmeddelanden från backend, ex upptagna användarnamn/email
+            return;
+        }
+
+        // Vid lyckat resultat
+        document.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
+        errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
+        successMsg.push("Användare skapas!") // Meddelande i DOM att inloggningen gick bra
+        displaySuccessMsg(successMsg); // Visar att inloggningen lyckades i DOM
+        setTimeout(() => {
+            document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+            // Resettar formuläret efter lyckad registrering
+            successMsgList.innerHTML = "";
+
+            emailInput.value = "";
+            passwordInput.value = "";
+            usernameInput.value = "";
+
+        }, 1000);
+    } catch (error) {
+        console.error("Kunde inte skapa en ny användare: ", error);
+        showError("Fel uppstod, prova igen!"); // Visar felmeddelande i DOM
+    }
+}
+
 // Funktion som skriver ut felmeddelanden i DOM
 function displayErrorMsg(errors) {
     const errorMsgList = document.querySelector(".error-message ul");
@@ -119,6 +219,15 @@ function displayErrorMsg(errors) {
         liEl.textContent = error; // Tillger li-elementet texten som genererats inom arrayen av errors
         errorMsgList.appendChild(liEl); // Lägger till li-elementet inom felmeddelande-listan
     });
+}
+
+// Skapar och visar felmeddelanden som finns i backend(API), till frontend i DOM
+function showError(error) {
+    const errorMsgList = document.querySelector(".error-message ul");
+    errorMsgList.innerHTML = "";
+    const li = document.createElement("li");
+    li.textContent = error;
+    errorMsgList.appendChild(li);
 }
 
 // Funktion för att visa inloggning fungerade i DOM
