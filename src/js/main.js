@@ -1,4 +1,5 @@
 import '../sass/main.scss'
+import { checkAuthAccess } from "./authentication/checkAuth.js";
 
 const url = "http://localhost:3000";
 
@@ -6,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initLoginForm();
     logoutUser();
+    checkAuthAccess();
 
     // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
     if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
