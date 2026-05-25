@@ -1,0 +1,8 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+#login-btn {
+    @include button($btn-color-primary, $color-text-light);
+    &:hover {
+        background-color: #0d52b9;
+    }
+}

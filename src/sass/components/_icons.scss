@@ -1,0 +1,21 @@
+@use "../abstracts/animations" as *;
+.loading-spinner {
+    display: block;
+    border: 4px solid rgb(255, 255, 255);
+    border-bottom: solid 4px rgb(0, 17, 255);
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    animation: rotateSpin 1.5s linear infinite;
+    margin: 0 auto;
+}
+
+#login-spinner {
+    width: 30px;
+    height: 30px;
+    animation: rotateSpin 1.5s linear infinite;
+}
+
+.hidden {
+    display: none;
+}

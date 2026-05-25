@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osteria | Logga in</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+</head>
+
+<body>
+    <main class="login-main">
+        <h1>Inloggning till Osteria Vapiano</h1>
+        <form id="login-form" method="post">
+            <h2>Logga in</h2>
+            <div class="error-message">
+                <ul></ul>
+            </div>
+            <div class="success-message">
+                <ul></ul><span id="login-spinner" class="material-symbols-outlined hidden">local_pizza</span>
+            </div>
+            <!--<div class="loading-spinner hidden"></div>-->
+            <div class="input-area">
+                <label for="login-email">Din email</label>
+                <input type="text" id="login-email" name="email" placeholder="Skriv email">
+            </div>
+            <div class="input-area">
+                <label for="login-password">Lösenord</label>
+                <input type="password" id="login-password" name="password" placeholder="Skriv lösenord">
+            </div>
+            <button id="login-btn" type="submit">Enter<span id="login-icon"
+                    class="material-symbols-outlined">login</span>
+                    
+                </button>
+        </form>
+    </main>
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>
