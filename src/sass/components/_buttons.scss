@@ -48,13 +48,12 @@
     @include cta-page-btn($btn-color-review, $color-text-light);
 }
 
-.cta-btn.active {
-    text-decoration: underline;
-    background-color: blue
-}
-
 #edit-dish-btn {
     @include cta-page-btn($btn-color-dinner, $color-text-light);
+}
+
+.submit-dish-btn {
+    @include cta-page-btn($btn-color-primary, $color-text-light);
 }
 
 @media screen and (max-width: 768px) {

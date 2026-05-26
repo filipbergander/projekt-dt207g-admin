@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initLoginForm();
     initRegisterForm();
+    initNewDinnerForm()
     logoutUser();
     checkAuthAccess();
     changeDinnerForm();
@@ -108,25 +109,22 @@ function initNewDinnerForm() {
 
             // Hämtar värden inom formuläret
             const dinnerDishPrice = document.getElementById("dish-price").value.trim();
-            const dinnerDishName = document.getElementById("dish-price").value.trim();
-            const dinnerDishDescription = document.getElementById("dish-price").value.trim();
-
+            const dinnerDishName = document.getElementById("dish-name").value.trim();
+            const dinnerDishDescription = document.getElementById("dish-description").value.trim();
 
             // Specifika felmeddelande för inputs
-            if (registerEmail === "") errors.push("Du måste fylla i email!");
-            if (registerPassword === "") {
-                errors.push("Du måste fylla i lösenord!")
-            } else if (registerPassword.length < 6) {
-                errors.push("Lösenordet måste vara minst 6 tecken!");
+            if (dinnerDishName === "") errors.push("Du måste fylla i namn!");
+            if (dinnerDishDescription === "") { errors.push("Lägg till en beskrivning!") }
+            if (dinnerDishPrice <= 0) {
+                errors.push("Priset kan inte vara 0 eller mindre!");
             }
-            if (registerUsername === "") errors.push("Du måste fylla i användarnamn!");
 
             // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
             if (errors.length > 0) {
                 displayErrorMsg(errors);
                 return; // Stoppar formuläret från att bli submittat
-            } else { // Annars om inga felmeddelanden finns, anropas createUser
-                createUser();
+            } else { // Annars om inga felmeddelanden finns, anropas funktionen
+                createNewDinnerDish();
             }
         });
     }
@@ -248,11 +246,67 @@ async function createUser() {
         }, 1000);
     } catch (error) {
         console.error("Kunde inte skapa en ny användare: ", error);
-        showError("Fel uppstod, prova igen!"); // Visar felmeddelande i DOM
+        showError("Oväntat fel. Försök igen om en stund!"); // Visar felmeddelande i DOM
     }
 }
 
-async function createDinnerDish() {}
+async function createNewDinnerDish() {
+    const categoryInput = document.getElementById("dish-category");
+    const nameInput = document.getElementById("dish-name");
+    const priceInput = document.getElementById("dish-price");
+    const descriptionInput = document.getElementById("dish-description");
+
+    // Inputs inom formuläret 
+    const category = categoryInput.value.trim();
+    const name = nameInput.value.trim();
+    const price = priceInput.value.trim();
+    const description = descriptionInput.value.trim();
+
+    const newDishForm = document.getElementById("new-dish-form");
+    const errorMsgList = document.querySelector(".error-message ul"); // Felmeddelanden
+    const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+    successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
+
+    let errors = [];
+    let successMsg = [];
+    // Skapar en ny användare genom routen i backend
+    try {
+        const response = await fetch(`${url}/dinnerdish`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ category, name, description, price })
+        });
+        const data = await response.json();
+        // Vid misslyckat resultat
+        if (!response.ok) {
+            document.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
+            const BackendError = data.error || "Kunde inte skapa en ny maträtt..."; // Felmeddelande från backend eller vanligt
+            showError(BackendError); // Visar felmeddelanden från backend, ex upptagna användarnamn/email
+            return;
+        }
+
+        // Vid lyckat resultat
+        document.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
+        errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
+        successMsg.push("Ny maträtt skapad!") // Meddelande i DOM att inloggningen gick bra
+        displaySuccessMsg(successMsg); // Visar att inloggningen lyckades i DOM
+        setTimeout(() => {
+            document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+
+            // Resettar formuläret efter lyckad registrering
+            successMsgList.innerHTML = "";
+            nameInput.value = "";
+            descriptionInput.value = "";
+            priceInput.value = 0;
+
+        }, 1000);
+    } catch (error) {
+        console.error("Kunde inte skapa en ny middags-maträtt: ", error);
+        showError("Oväntat fel. Försök igen om en stund!"); // Visar felmeddelande i DOM
+    }
+}
 
 // Funktion som skriver ut felmeddelanden i DOM
 function displayErrorMsg(errors) {
@@ -315,23 +369,27 @@ function changeDinnerForm() {
     // Sektioner inom middag-sidan
     const newDishContainer = document.getElementById("new-dish-container");
     const editDishContainer = document.getElementById("edit-dish-container");
+    if (newDishBtn) {
+        newDishBtn.addEventListener("click", () => {
+            newDishContainer.classList.remove("hidden");
+            newDishBtn.classList.add("active");
 
-    newDishBtn.addEventListener("click", () => {
-        newDishContainer.classList.remove("hidden");
-        newDishBtn.classList.add("active");
+            editDishContainer.classList.add("hidden");
+            editDishBtn.classList.remove("active");
 
-        editDishContainer.classList.add("hidden");
-        editDishBtn.classList.remove("active");
+        });
+    }
 
-    });
+    if (editDishBtn) {
+        editDishBtn.addEventListener("click", () => {
+            editDishContainer.classList.remove("hidden");
+            editDishBtn.classList.add("active");
 
-    editDishBtn.addEventListener("click", () => {
-        editDishContainer.classList.remove("hidden");
-        editDishBtn.classList.add("active");
+            newDishContainer.classList.add("hidden");
+            newDishBtn.classList.remove("active");
+        });
+    }
 
-        newDishContainer.classList.add("hidden");
-        newDishBtn.classList.remove("active");
-    });
 }
 
 // Loggar ut användare
