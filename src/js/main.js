@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initRegisterForm();
     logoutUser();
     checkAuthAccess();
+    changeDinnerForm();
 
     // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
     if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
@@ -70,6 +71,46 @@ function initRegisterForm() {
             const registerPassword = document.getElementById("register-password").value.trim();
             const registerUsername = document.getElementById("register-username").value.trim();
             const registerRole = document.getElementById("register-role").value.trim();
+
+            // Specifika felmeddelande för inputs
+            if (registerEmail === "") errors.push("Du måste fylla i email!");
+            if (registerPassword === "") {
+                errors.push("Du måste fylla i lösenord!")
+            } else if (registerPassword.length < 6) {
+                errors.push("Lösenordet måste vara minst 6 tecken!");
+            }
+            if (registerUsername === "") errors.push("Du måste fylla i användarnamn!");
+
+            // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
+            if (errors.length > 0) {
+                displayErrorMsg(errors);
+                return; // Stoppar formuläret från att bli submittat
+            } else { // Annars om inga felmeddelanden finns, anropas createUser
+                createUser();
+            }
+        });
+    }
+
+}
+
+// formulär för att lägga till en ny maträtt med felhantering
+function initNewDinnerForm() {
+
+    // Formulär och knappar
+    const newDishForm = document.getElementById("new-dish-form");
+    const newDinnerBtn = document.getElementById("add-dish-btn");
+
+    // Eventlyssnare för formuläret
+    if (newDishForm) {
+        newDishForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            let errors = [];
+
+            // Hämtar värden inom formuläret
+            const dinnerDishPrice = document.getElementById("dish-price").value.trim();
+            const dinnerDishName = document.getElementById("dish-price").value.trim();
+            const dinnerDishDescription = document.getElementById("dish-price").value.trim();
+
 
             // Specifika felmeddelande för inputs
             if (registerEmail === "") errors.push("Du måste fylla i email!");
@@ -211,6 +252,8 @@ async function createUser() {
     }
 }
 
+async function createDinnerDish() {}
+
 // Funktion som skriver ut felmeddelanden i DOM
 function displayErrorMsg(errors) {
     const errorMsgList = document.querySelector(".error-message ul");
@@ -259,6 +302,38 @@ function displayUserUi() {
         adminUser.innerHTML = "";
     }
 }
+
+function changeDinnerForm() {
+    // Knappar inom middag-sidan
+    const newDishBtn = document.getElementById("new-dish-btn");
+    const editDishBtn = document.getElementById("edit-dish-btn");
+
+    // Formulär inom middag-sidan
+    const newDishForm = document.getElementById("new-dish-form");
+    const editDishForm = document.getElementById("edit-dish-form");
+
+    // Sektioner inom middag-sidan
+    const newDishContainer = document.getElementById("new-dish-container");
+    const editDishContainer = document.getElementById("edit-dish-container");
+
+    newDishBtn.addEventListener("click", () => {
+        newDishContainer.classList.remove("hidden");
+        newDishBtn.classList.add("active");
+
+        editDishContainer.classList.add("hidden");
+        editDishBtn.classList.remove("active");
+
+    });
+
+    editDishBtn.addEventListener("click", () => {
+        editDishContainer.classList.remove("hidden");
+        editDishBtn.classList.add("active");
+
+        newDishContainer.classList.add("hidden");
+        newDishBtn.classList.remove("active");
+    });
+}
+
 // Loggar ut användare
 function logoutUser() {
     const logoutBtn = document.getElementById("logout-button");

@@ -10,6 +10,7 @@ export default defineConfig({
             input: {
                 index: resolve(__dirname, "index.html"),
                 register: resolve(__dirname, "register.html"),
+                dinner: resolve(__dirname, "dinner.html"),
                 login: resolve(__dirname, "login.html")
             }
         }

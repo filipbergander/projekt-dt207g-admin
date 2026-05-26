@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osteria | Registrera användare</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo"><span id="logo" class="material-symbols-outlined">local_pizza</span>Osteria
+            Lema</a>
+        <nav>
+            <ul class="dashboard-list">
+                <li><button id="logout-button">Logga ut</button></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="dish-main">
+        <h1>Middag</h1>
+        <div class="dinner-btns-container">
+            <button id="new-dish-btn" class="cta-btn">
+                <span class="material-symbols-outlined">add</span>
+                Skapa ny maträtt
+            </button>
+            <button id="edit-dish-btn" class="cta-btn">
+                <span class="material-symbols-outlined">settings</span>
+                Ändra eller ta bort maträtt
+            </button>
+        </div>
+        <section id="new-dish-container" class="dish-container hidden">
+            <h2>Ny maträtt</h2>
+            <form id="new-dish-form" method="post">
+
+                <div class="error-message">
+                    <ul></ul>
+                </div>
+                <div class="success-message">
+                    <ul></ul><span class="loading-spinner hidden"></span>
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-category">Kategori</label>
+                    <select id="dish-category" name="dish-category">
+                        <option value="förrätt">Förrätt</option>
+                        <option value="huvudrätt">Huvudrätt</option>
+                        <option value="efterrätt">Efterrätt</option>
+                    </select>
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-name">Namn</label>
+                    <input type="text" id="dish-name" name="dish-name" placeholder="Skriv namn">
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-price">Pris</label>
+                    <input type="number" id="dish-price" name="dish-price" placeholder="Skriv pris">
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-description">Beskrivning</label>
+                    <textarea id="dish-description" name="dish-description" rows="4" cols="50" placeholder="Beskriv maträtten"></textarea>
+                </div>
+
+                <button id="add-dish-btn" type="submit">Lägg till maträtt<span id="add-dish-icon"
+                        class="material-symbols-outlined">
+                        person_add
+                    </span></button>
+            </form>
+        </section>
+        <section id="edit-dish-container" class="dish-container">
+            <h2>Ändra eller ta bort maträtt</h2>
+            <form id="edit-dish-form" method="post">
+
+                <div class="error-message">
+                    <ul></ul>
+                </div>
+                <div class="success-message">
+                    <ul></ul><span class="loading-spinner hidden"></span>
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-category">Kategori</label>
+                    <select id="dish-category" name="dish-category">
+                        <option value="förrätt">Förrätt</option>
+                        <option value="huvudrätt">Huvudrätt</option>
+                        <option value="efterrätt">Efterrätt</option>
+                    </select>
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-name">Namn</label>
+                    <input type="text" id="dish-name" name="dish-name" placeholder="Skriv namn">
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-price">Pris</label>
+                    <input type="number" id="dish-price" name="dish-price" placeholder="Skriv pris">
+                </div>
+
+                <div class="input-area">
+                    <label for="dish-description">Beskrivning</label>
+                    <textarea id="dish-description" name="dish-description" rows="4" cols="50" placeholder="Beskriv maträtten"></textarea>
+                </div>
+
+                <button id="add-dish-btn" type="submit">Lägg till maträtt<span id="add-dish-icon"
+                        class="material-symbols-outlined">
+                        person_add
+                    </span></button>
+            </form>
+        </section>
+    </main>
+    <footer id="footer">
+        <p> Admin-sida för Osteria Lema</p>
+    </footer>
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>

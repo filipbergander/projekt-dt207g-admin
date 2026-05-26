@@ -44,6 +44,19 @@
     @include admin-btn($btn-color-review, $color-text-light);
 }
 
+#new-dish-btn {
+    @include cta-page-btn($btn-color-review, $color-text-light);
+}
+
+.cta-btn.active {
+    text-decoration: underline;
+    background-color: blue
+}
+
+#edit-dish-btn {
+    @include cta-page-btn($btn-color-dinner, $color-text-light);
+}
+
 @media screen and (max-width: 768px) {
     #logout-button {
         font-size: 1.1em;

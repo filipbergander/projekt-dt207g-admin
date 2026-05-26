@@ -11,6 +11,7 @@ export function checkAuthAccess() {
     const protectedRoutes = [
         "/index.html",
         "/register.html",
+        "/dinner.html",
         "/"
     ]
 

@@ -1,0 +1,44 @@
+@use "./login" as *;
+#new-dish-form {
+    @extend #login-form;
+    background-color: rgb(142, 193, 252);
+    width: 100%;
+    max-width: 400px;
+    select {
+        padding: 0.5em;
+        border-radius: 4px;
+        border: 0.5px solid rgb(235, 15, 125);
+        cursor: pointer;
+    }
+}
+
+.register-main {
+    @extend .login-main;
+    width: 100%;
+}
+
+#dish-description {
+    display: block;
+    overflow: hidden;
+    resize: vertical;
+    max-height: 100px;
+    font-size: 1em;
+    padding: 0.5em;
+    line-height: 1.4;
+    border: 1px solid blanchedalmond;
+}
+
+.dinner-btns-container {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 768px) {}
+
+@media screen and (max-width: 475px) {
+    .dinner-btns-container {
+        flex-direction: column;
+    }
+}

@@ -34,10 +34,40 @@
     justify-content: center;
     transition: 0.3s ease;
     gap: 0.5em;
+    text-decoration: none;
     &:hover {
         opacity: 0.8;
     }
     &:active {
         background-color: rgb(1, 139, 8);
     }
+}
+
+@mixin cta-page-btn($btn-color-primary, $color-text) {
+    color: $color-text;
+    background-color: $btn-color-primary;
+    font-weight: bold;
+    box-shadow: 0 0 8px 1px black;
+    cursor: pointer;
+    padding: 1em 0.5em;
+    border-radius: 4px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    border: none;
+    justify-content: center;
+    transition: 0.3s ease;
+    gap: 0.5em;
+    text-decoration: none;
+    &:hover {
+        opacity: 0.8;
+    }
+    &:active {
+        background-color: rgb(1, 139, 8);
+    }
+    @media screen and (max-width: 768px) {
+        padding: 0.5em 0.25em;
+        font-size: 1;
+    }
+    @media screen and (max-width: 475px) {}
 }
