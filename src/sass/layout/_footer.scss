@@ -3,11 +3,16 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5em;
+    gap: 1em;
     height: 60px;
     width: 100%;
     background-color: #6b6be4;
     margin: 0 auto;
+    p {
+        color: rgb(17, 6, 6);
+        font-weight: bold;
+        font-size: 1em;
+    }
 }
 
 footer a {
@@ -17,7 +22,8 @@ footer a {
     border: none;
     background: none;
     transition: 0.2s ease;
-    font-size: 1.3em;
+    font-size: 1.1em;
+    text-decoration: none;
     &:hover {
         color: $link-color;
         transform: scale(1.05);

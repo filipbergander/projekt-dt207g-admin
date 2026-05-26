@@ -1,5 +1,6 @@
 import '../sass/main.scss'
 import { checkAuthAccess } from "./authentication/checkAuth.js";
+import { changeFooterText } from "./authentication/checkAuth.js";
 
 const url = "http://localhost:3000";
 
