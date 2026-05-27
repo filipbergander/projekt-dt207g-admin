@@ -111,7 +111,9 @@ function initNewDinnerForm() {
             if (dinnerDishName === "") errors.push("Du måste fylla i namn!");
             if (dinnerDishDescription === "") { errors.push("Lägg till en beskrivning!") }
             if (dinnerDishPrice <= 0) {
-                errors.push("Priset kan inte vara 0 eller mindre!");
+                errors.push("Priset måste vara större än 0 kr");
+            } else if (dinnerDishPrice > 1000) {
+                errors.push("Priset kan inte vara dyrare än 1000 kr")
             }
 
             // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
@@ -355,7 +357,7 @@ async function renderCategoryDish(container, dinnerDishes) {
         const article = document.createElement("article"); // Skapar artikel
         article.classList.add("dinner-article");
 
-        const title = document.createElement("h3"); // Skapar rubrik för varje artikel
+        const title = document.createElement("h4"); // Skapar rubrik för varje artikel
         title.textContent = dish.name; // Namnet på varje maträtt i databasen
 
         const price = document.createElement("p");

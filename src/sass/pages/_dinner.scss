@@ -5,7 +5,7 @@
     padding: 1em 3em 2em;
     border-radius: 8px;
     h2 {
-        color: #fff;
+        color: black;
     }
 }
 
@@ -24,7 +24,7 @@
 
 #edit-dish-container {
     @extend #new-dish-container;
-    background-color: #f0c2cd;
+    background-color: #ebe8e9;
 }
 
 #edit-dish-form {
@@ -54,7 +54,31 @@
     justify-content: center;
 }
 
-#dishes-list {}
+#dishes-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5em;
+    margin-top: 1em;
+    h3 {
+        font-size: 1.3em;
+        text-decoration: underline;
+    }
+    article {
+        background-color: #f7b8e9;
+        padding: 0.75em;
+        border-radius: 6px;
+        margin: 1em 0em;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.795);
+    }
+    h4 {
+        margin-top: 0.5em;
+        text-align: left;
+    }
+    p {
+        word-break: break-all;
+        text-align: left;
+    }
+}
 
 @media screen and (max-width: 768px) {}
 
