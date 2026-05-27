@@ -27,7 +27,7 @@
             </button>
             <button id="edit-dish-btn" class="cta-btn">
                 <span class="material-symbols-outlined">settings</span>
-                Ändra eller ta bort maträtt
+                Hantera maträtter
             </button>
         </div>
         <section id="new-dish-container" class="dish-container hidden">
@@ -44,9 +44,9 @@
                 <div class="input-area">
                     <label for="dish-category">Kategori</label>
                     <select id="dish-category" name="dish-category">
-                        <option value="förrätt">Förrätt</option>
-                        <option value="huvudrätt">Huvudrätt</option>
-                        <option value="efterrätt">Efterrätt</option>
+                        <option value="Förrätt">Förrätt</option>
+                        <option value="Huvudrätt">Huvudrätt</option>
+                        <option value="Efterrätt">Efterrätt</option>
                     </select>
                 </div>
 
@@ -65,17 +65,31 @@
                     <textarea id="dish-description" name="dish-description" rows="4" cols="50" placeholder="Beskriv maträtten"></textarea>
                 </div>
 
-                <button id="add-dish-btn" class="submit-dish-btn" type="submit">Lägg till maträtt<span id="add-dish-icon"
-                        class="material-symbols-outlined">
+                <button id="add-dish-btn" class="submit-dish-btn" type="submit">Lägg till maträtt<span
+                        id="add-dish-icon" class="material-symbols-outlined">
                         add
                     </span></button>
             </form>
         </section>
         <section id="edit-dish-container" class="dish-container hidden">
-
+            <h2>Hantera maträtter</h2>
+            <div id="dishes-list">
+                <section>
+                    <h2>Förrätter</h2>
+                    <div id="starters-list" class="category-column"></div>
+                </section>
+                <section>
+                    <h2>Huvudrätter</h2>
+                    <div id="main-course-list" class="category-column"></div>
+                </section>
+                <section>
+                    <h2>Efterrätter</h2>
+                    <div id="dessert-list" class="category-column"></div>
+                </section>
+            </div>
         </section>
         <!-- <section id="edit-dish-container" class="dish-container hidden">
-            <h2>Ändra eller ta bort maträtt</h2>
+            <h2>Hantera maträtter</h2>
             <form id="edit-dish-form" method="post">
 
                 <div class="error-message">
@@ -118,6 +132,7 @@
     </main>
     <footer id="footer">
         <p> Admin-sida för Osteria Lema</p>
+        <a href="register.html">Registrera användare</a>
     </footer>
     <script type="module" src="/src/js/main.js"></script>
 </body>

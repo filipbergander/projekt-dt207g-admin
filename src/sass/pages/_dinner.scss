@@ -24,7 +24,7 @@
 
 #edit-dish-container {
     @extend #new-dish-container;
-    background-color: #69041d;
+    background-color: #f0c2cd;
 }
 
 #edit-dish-form {
@@ -53,6 +53,8 @@
     align-items: center;
     justify-content: center;
 }
+
+#dishes-list {}
 
 @media screen and (max-width: 768px) {}
 

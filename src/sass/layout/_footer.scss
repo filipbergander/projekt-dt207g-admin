@@ -6,10 +6,10 @@ footer {
     gap: 1em;
     height: 60px;
     width: 100%;
-    background-color: #6b6be4;
+    background-color: #5555f5;
     margin: 0 auto;
     p {
-        color: rgb(17, 6, 6);
+        color: rgba(253, 253, 253, 0.979);
         font-weight: bold;
         font-size: 1em;
     }
@@ -19,6 +19,7 @@ footer a {
     font-weight: bold;
     color: white;
     cursor: pointer;
+    text-decoration: underline;
     border: none;
     background: none;
     transition: 0.2s ease;
