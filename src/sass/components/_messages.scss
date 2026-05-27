@@ -1,3 +1,4 @@
+@use "../abstracts/animations" as *;
 .error-message {
     color: rgb(221, 4, 4);
     font-weight: bold;
@@ -35,4 +36,8 @@
         font-weight: bold;
         color: #ffe600;
     }
+}
+
+#loading-text {
+    animation: pulseText 1.5s infinite;
 }
