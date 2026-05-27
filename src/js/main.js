@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initRegisterForm();
     initNewDinnerForm()
     logoutUser();
-    listenDinnerBtns()
+    listenDinnerBtns();
     changeDinnerForm();
     displayUserUi(); // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
 });
@@ -206,7 +206,7 @@ async function createUser() {
     const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
     successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
 
-    const token = localStorage.getItem("login-key"); // Kollar om token finns för att använda i anropet
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
 
     //Meddelanden
     let errors = [];
@@ -268,7 +268,7 @@ async function createNewDinnerDish() {
     const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
     successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
 
-    const token = localStorage.getItem("login-key"); // Kollar om token finns för att använda i anropet
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
 
     // Meddelanden i DOM
     let errors = [];
@@ -315,7 +315,7 @@ async function createNewDinnerDish() {
 // Hämtar maträtter från middagsmeny i backend
 async function fetchDinnerDishes() {
     const dishList = document.getElementById("dishes-list");
-    const token = localStorage.getItem("login-key"); // Token används för att se om användaren är behörig
+    const token = fetchToken(); // Token används för att se om användaren är behörig
     // Meddelande innan data har hämtats i backend
     //dishList.textContent = "Hämtar maträtter från databasen, vänta på att servern ska vakna..."
     //dishList.style.color = "white";
@@ -407,9 +407,9 @@ async function renderCategoryDish(container, dinnerDishes) {
 }
 // Tar bort en rätt från middagsmenyn
 async function deleteDinnerDish(id) {
-    const token = localStorage.getItem("login-key"); // Kollar om token finns för att använda i anropet
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
     try {
-        const response = await fetch(`${url}/` + id, {
+        const response = await fetch(`${url}/dinner/${id}`, {
             method: "DELETE",
             headers: {
                 'Authorization': 'Bearer ' + token
@@ -538,16 +538,21 @@ function listenDinnerBtns() {
         const target = event.target;
 
         if (target.classList.contains("delete-dinner-btn")) {
-            console.log("Du klickade på knappen för att ta bort en måltid! ");
-            deleteBtnId = target.dataset.id;
-            await deleteDinnerDish(deleteBtnId);
-            target.closest("article").remove();
-            await fetchDinnerDishes();
-        } else if (target.classList.contains("update-dinner-btn")) {
-            console.log("Du klickade på knappen för att uppdatera en måltid! ");
-            updateBtnId = target.dataset.id;
-            await updateDinnerDish(updateBtnId);
-            await fetchDinnerDishes();
+            const deleteBtnId = target.dataset.id; // Knappens dataset-id 
+            await deleteDinnerDish(deleteBtnId); // Anropar funktionen med id som argument
+            target.closest("article").remove(); // Tar bort artikeln från DOM
+            await fetchDinnerDishes(); // Hämtar uppdaterad lista
         }
+        /*else if (target.classList.contains("update-dinner-btn")) {
+                   console.log("Du klickade på knappen för att uppdatera en måltid! ");
+                   updateBtnId = target.dataset.id;
+                   await updateDinnerDish(updateBtnId);
+                   await fetchDinnerDishes();
+               }*/
     });
+}
+
+// Hämtar in token från localstorage
+function fetchToken() {
+    return localStorage.getItem("login-key");
 }
