@@ -4,7 +4,7 @@ checkAuthAccess();
 // Ser över om användaren har behörighet till admin-sidan
 export function checkAuthAccess() {
 
-    // Sökväg
+    // Sökvägen för användarens webbfönster just nu
     const userPath = window.location.pathname;
 
     // Routes som kräver inloggning
@@ -15,7 +15,7 @@ export function checkAuthAccess() {
         "/"
     ]
 
-    // Går inte att navigera till admin-sidan om användaren inte är inloggad
+    // Om man försöker navigerar till sida som inte är login och ingen key finns sparad
     if (protectedRoutes.includes(userPath) && !localStorage.getItem("login-key")) {
         window.location.href = "login.html"; // Redirect till login-sidan
     }
@@ -23,12 +23,12 @@ export function checkAuthAccess() {
     if (userPath === "/register.html" && localStorage.getItem("role") !== "admin") {
         return window.location.href = "index.html"; // Redirect till index-sidan
     }
-
+    // Ändrar footerns utseende när man inte har behörigheten för admin
     if ((userPath === "/index.html" || userPath === "/") && localStorage.getItem("role") !== "admin") {
         changeFooterText();
     }
 }
-
+// Ändrar footerns utseende och tar bort länk till registrera-sidan
 export function changeFooterText() {
     const footer = document.getElementById("footer");
     footer.innerHTML = "";

@@ -12,12 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutUser();
     checkAuthAccess();
     changeDinnerForm();
-
-    // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
-    if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
-        displayUserUi();
-    }
-
+    displayUserUi(); // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
 });
 
 // Lyssnar på ändringar som görs i formuläret, visar felmeddelanden i DOM och anropar funktionen för att logga in en användare
@@ -345,8 +340,11 @@ function displayUserUi() {
     const role = localStorage.getItem("role");
     const adminUser = document.getElementById("admin-user"); // Elemenent inom HTML
     const usernameKey = localStorage.getItem("username"); // Hämtar användarnamn
+
+    // Om man inte är på startsidan -> fortsätter inte koden att köras
+    if (!adminUser) return;
     // Om det finns användarnamn sparat
-    if (localStorage.getItem("login-key")) {
+    if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
         // Struktur med meddelande
         adminUser.innerHTML = `
         <p> Inloggad som ${role}: <span class="user-span">${usernameKey} </span></p>
