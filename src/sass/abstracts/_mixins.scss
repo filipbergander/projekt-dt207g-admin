@@ -66,8 +66,36 @@
         background-color: rgb(1, 139, 8);
     }
     @media screen and (max-width: 768px) {
-        padding: 0.5em 0.25em;
+        padding: 0.5em 0.5em;
         font-size: 1;
+    }
+    @media screen and (max-width: 475px) {}
+}
+
+@mixin dishBtn($btn-color-primary, $color-text) {
+    color: $color-text;
+    background-color: $btn-color-primary;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.25em 0.25em;
+    border-radius: 4px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+    justify-content: center;
+    transition: 0.3s ease;
+    gap: 0.5em;
+    text-decoration: none;
+    &:hover {
+        background-color: rgb(1, 139, 8);
+    }
+    &:active {
+        opacity: 0.8;
+    }
+    @media screen and (max-width: 768px) {
+        padding: 0.25em 0.125em;
+        font-size: 0.9;
     }
     @media screen and (max-width: 475px) {}
 }

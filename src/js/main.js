@@ -364,13 +364,29 @@ async function renderCategoryDish(container, dinnerDishes) {
         price.textContent = `${dish.price} kr`; // Priset för varje maträtt
 
         const description = document.createElement("p");
+        description.classList.add("dish-dinner-description")
         description.textContent = dish.description; // Beskrivning av varje maträtt
+
+        const div = document.createElement("div");
+        div.classList.add("dish-row-btns");
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Radera";
+        deleteBtn.classList.add("delete-dinner-btn");
+        deleteBtn.dataset.id = dish._id;
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Uppdatera";
+        editBtn.classList.add("update-dinner-btn");
+        editBtn.dataset.id = dish._id;
 
         // Lägger till varje element inom artikeln
         article.appendChild(title);
         article.appendChild(price);
         article.appendChild(description);
-
+        article.appendChild(div);
+        div.appendChild(deleteBtn);
+        div.appendChild(editBtn);
         // Lägger till artikeln till varje kategori av maträtt
         container.appendChild(article);
     });

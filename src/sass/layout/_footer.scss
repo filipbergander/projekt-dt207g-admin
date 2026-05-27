@@ -24,9 +24,23 @@ footer a {
     background: none;
     transition: 0.2s ease;
     font-size: 1.1em;
-    text-decoration: none;
+    text-decoration: underline;
     &:hover {
         color: $link-color;
         transform: scale(1.05);
     }
 }
+
+@media screen and (max-width: 475px) {
+    footer {
+        gap: 0.5em;
+        a {
+            font-size: 0.9em;
+        }
+        p {
+            font-size: 0.9em;
+        }
+    }
+}
+
+@media screen and (max-width: 370px) {}
