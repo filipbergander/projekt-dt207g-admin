@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     listenDinnerBtns();
     changeDinnerForm();
     displayUserUi(); // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
+
+    document.getElementById("reset-form-btn").addEventListener("click", () => {
+        resetDishForm();
+    });
 });
 
 // Lyssnar på ändringar som görs i formuläret, visar felmeddelanden i DOM och anropar funktionen för att logga in en användare
@@ -116,14 +120,33 @@ function initNewDinnerForm() {
             const dinnerDishPrice = priceInput.value.trim();
             const dinnerDishName = nameInput.value.trim();
             const dinnerDishDescription = descriptionInput.value.trim();
+            const dinnerCategory = categoryInput.value.trim();
+
+            const categoriesAllowed = ["Förrätt", "Huvudrätt", "Efterrätt"];
 
             // Specifika felmeddelande för inputs
-            if (dinnerDishName === "") errors.push("Du måste fylla i namn!");
-            if (dinnerDishDescription === "") { errors.push("Lägg till en beskrivning!") }
+            if (!categoriesAllowed.includes(dinnerCategory.trim().toLowerCase())) {
+                errors.push("Fy! Manipulera inte kategorin...");
+            }
+
+            if (dinnerDishName === "")
+                errors.push("Du måste fylla i namn!");
+            if (dinnerDishName.length < 3) {
+                errors.push("Namnet måste vara längre än 3 bokstäver...");
+            } else if (dinnerDishName.length > 40) {
+                errors.push("Namnet kan inte vara längre än 40 bokstäver...");
+            }
+
             if (dinnerDishPrice <= 0) {
                 errors.push("Priset måste vara större än 0 kr");
             } else if (dinnerDishPrice > 1000) {
                 errors.push("Priset kan inte vara dyrare än 1000 kr")
+            }
+
+            if (dinnerDishDescription === "") {
+                errors.push("Lägg till en beskrivning!")
+            } else if (dinnerDishDescription.length < 6 || dinnerDishDescription.length > 100) {
+                errors.push("Beskrivning för en maträtt måste vara mellan 6 och 100 tecken")
             }
 
             // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
@@ -131,7 +154,7 @@ function initNewDinnerForm() {
                 displayErrorMsg(errors);
                 return; // Stoppar formuläret från att bli submittat
             }
-            // Kollar om id för en post finns lagrat i localstorage
+            // Kollar om id för en post finns lagrat i localstorage, -> vid uppdatering av maträtt
             if (dinnerId) {
                 newDinnerBtn.textContent = "Uppdatera maträtten";
                 const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
@@ -144,21 +167,15 @@ function initNewDinnerForm() {
                     document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
 
                     // Resettar formuläret efter lyckad registrering
-                    successMsgList.innerHTML = "";
-                    categoryInput.value = "Förrätt";
-                    nameInput.value = "";
-                    descriptionInput.value = "";
-                    priceInput.value = 0;
-                    document.querySelector(".error-message ul").innerHTML = "";
-                    localStorage.removeItem("dinner-id");
-                    // Visar listan av maträtter igen
+                    resetDishForm();
+                    // Visar listan av maträtter
                     document.getElementById("new-dish-container").classList.add("hidden");
                     document.getElementById("edit-dish-container").classList.remove("hidden");
-                    // Resettar texter inom formuläret
-                    document.getElementById("dish-form-title").textContent = "Lägg till maträtt"
-                    document.getElementById("add-dish-btn").textContent = "Lägg till maträtt"
                 }, 1000);
                 // Hämtar listan av maträtter 
+
+                // Felmeddelanden i formuläret
+                document.querySelector(".error-message ul").innerHTML = "";
                 await fetchDinnerDishes();
             } else {
 
@@ -343,12 +360,7 @@ async function createNewDinnerDish() {
             document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
 
             // Resettar formuläret efter lyckad maträtt
-            successMsgList.innerHTML = "";
-            categoryInput.value = "Förrätt";
-            nameInput.value = "";
-            descriptionInput.value = "";
-            priceInput.value = 0;
-
+            resetDishForm();
         }, 1000);
     } catch (error) {
         console.error("Kunde inte skapa en ny middags-maträtt: ", error);
@@ -385,7 +397,7 @@ async function fetchDinnerDishes() {
         console.error("Kunde inte hämta middags-maträtter: ", error);
         //dishList.innerHTML = "";
         // Felmeddelanden i DOM
-        loadingText.textContent = "Kunde inte hämta maträtter för middagsmeny från servern, prova lägg till en ny rätt..."
+        loadingText.textContent = "Kunde inte hämta maträtter för middagsmeny från servern, prova logga in igen..."
         loadingText.style.textAlign = "center";
     }
 }
@@ -662,6 +674,9 @@ function listenDinnerBtns() {
             newDishContainer.classList.remove("hidden");
             editDishContainer.classList.add("hidden");
 
+            document.querySelector(".success-message ul").innerHTML = "";
+            document.querySelector(".error-message ul").innerHTML = "";
+
             document.getElementById("dish-form-title").textContent = "Uppdatera maträtt"
             document.getElementById("add-dish-btn").textContent = "Uppdatera maträtt"
 
@@ -677,12 +692,29 @@ function fillUpdatedForm(dishInfo) {
     const priceInput = document.getElementById("dish-price");
     const descriptionInput = document.getElementById("dish-description");
 
-    console.log("Dish info: ", dishInfo);
-
     categoryInput.value = dishInfo.category;
     nameInput.value = dishInfo.name;
     priceInput.value = dishInfo.price;
     descriptionInput.value = dishInfo.description;
+}
+
+// Resettar formuläret för en middagsmaträtt
+function resetDishForm() {
+    // Inputs
+    document.getElementById("dish-category").value = "Förrätt";
+    document.getElementById("dish-name").value = "";
+    document.getElementById("dish-price").value = "";
+    document.getElementById("dish-description").value = "";
+
+    // Meddelanden i formuläret
+    document.querySelector(".success-message ul").innerHTML = "";
+    document.querySelector(".error-message ul").innerHTML = "";
+
+    // Texter
+    document.getElementById("dish-form-title").textContent = "Lägg till maträtt"
+    document.getElementById("add-dish-btn").textContent = "Lägg till maträtt"
+        // Localstorage key
+    localStorage.removeItem("dinner-id");
 }
 
 // Hämtar in token från localstorage
