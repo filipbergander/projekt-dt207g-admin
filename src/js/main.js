@@ -3,22 +3,28 @@ import { checkAuthAccess } from "./authentication/checkAuth.js";
 import { changeFooterText } from "./authentication/checkAuth.js";
 
 "use strict";
+// Url till backend
 //const url = "http://localhost:3000";
 const url = "https://fb-backend-api-p9fp.onrender.com"
 
-document.addEventListener("DOMContentLoaded", () => {
-    checkAuthAccess();
-    initLoginForm();
-    initRegisterForm();
-    initNewDinnerForm()
-    logoutUser();
-    listenDinnerBtns();
-    changeDinnerForm();
-    displayUserUi(); // Om användaren befinner sig på admin-sidan och har loggat in visas deras användarnamn i UI
+const formResetBtn = document.getElementById("reset-form-btn"); // Knapp för att resetta formulär till maträtt
 
-    document.getElementById("reset-form-btn").addEventListener("click", () => {
-        resetDishForm();
-    });
+document.addEventListener("DOMContentLoaded", () => {
+    checkAuthAccess(); // Middleware för att se över om användaren är behörig
+    initLoginForm(); // Formuläret för att logga in en användare
+    initRegisterForm(); // Formuläret för att registrera en ny användare
+    initNewDinnerForm() // Formuläret för att skapa en ny maträtt
+    logoutUser(); //För att logga ut en användare
+    listenDinnerBtns(); // Lyssnar på knappar för specifika maträtter delete/uppdatera
+    changeDinnerForm(); // Växlar mellan att visa maträtter eller formuläret
+    displayUserUi(); // Visar inloggade användare sina användarnamn på startsidan
+
+    // Om man är på den sidan med knappen
+    if (formResetBtn) {
+        formResetBtn.addEventListener("click", () => {
+            resetDishForm(); // Resettar formuläret
+        });
+    }
 });
 
 // Lyssnar på ändringar som görs i formuläret, visar felmeddelanden i DOM och anropar funktionen för att logga in en användare
