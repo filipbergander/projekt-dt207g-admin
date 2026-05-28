@@ -4,8 +4,8 @@ import { changeFooterText } from "./authentication/checkAuth.js";
 
 "use strict";
 // Url till backend
-//const url = "http://localhost:3000";
-const url = "https://fb-backend-api-p9fp.onrender.com";
+const url = "http://localhost:3000";
+//const url = "https://fb-backend-api-p9fp.onrender.com";
 
 const formResetBtn = document.getElementById("reset-form-btn"); // Knapp för att resetta formulär till maträtt
 
@@ -134,7 +134,7 @@ function initNewDinnerForm() {
             const dinnerDishDescription = descriptionInput.value.trim();
             const dinnerCategory = categoryInput.value.trim();
 
-            const categoriesAllowed = ["Förrätt", "Huvudrätt", "Efterrätt"];
+            const categoriesAllowed = ["Förrätt", "Huvudrätt", "Efterrätt", "Dryck"];
 
             // Specifika felmeddelande för inputs
             if (dinnerCategory === "" || dinnerCategory === "Välj kategori") {
@@ -159,9 +159,11 @@ function initNewDinnerForm() {
                 errors.push("Priset kan inte vara dyrare än 1000 kr")
             }
 
-            if (dinnerDishDescription === "") {
-                errors.push("Lägg till en beskrivning!")
-            } else if (dinnerDishDescription.length < 6 || dinnerDishDescription.length > 100) {
+            if (dinnerCategory !== "Dryck" && dinnerDishDescription === "") {
+                errors.push("Beskrivning krävs för en maträtt...");
+            }
+
+            if (dinnerCategory !== "Dryck" && dinnerDishDescription !== "" && (dinnerDishDescription.length < 6 || dinnerDishDescription.length > 100)) {
                 errors.push("Beskrivning för en maträtt måste vara mellan 6 och 100 tecken")
             }
 
@@ -435,16 +437,19 @@ async function filterDinnerDishes(dinnerDishes) {
     const starter = dinnerDishes.filter(dinner => dinner.category.trim() === "Förrätt");
     const main = dinnerDishes.filter(dinner => dinner.category.trim() === "Huvudrätt");
     const dessert = dinnerDishes.filter(dinner => dinner.category.trim() === "Efterrätt");
+    const drink = dinnerDishes.filter(dinner => dinner.category.trim() === "Dryck");
 
     // Container som kolumn för varje kategori av maträtt
     const startList = document.getElementById("starters-list");
     const mainCourseList = document.getElementById("main-course-list");
     const dessertList = document.getElementById("dessert-list");
+    const drinkList = document.getElementById("drink-list");
 
     // Anropar funktionen efter alla kategorier med sina containers
     renderCategoryDish(startList, starter);
     renderCategoryDish(mainCourseList, main);
     renderCategoryDish(dessertList, dessert);
+    renderCategoryDish(drinkList, drink);
 }
 
 async function fetchDinnerById(id) {

@@ -118,6 +118,8 @@
 .dish-dinner-description {
     padding-bottom: 1em;
     border-bottom: 1px solid grey;
+    overflow-wrap: break-word;
+    hyphens: auto;
     max-width: 40ch;
 }
 
