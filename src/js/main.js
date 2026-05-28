@@ -608,7 +608,7 @@ function displayUserUi() {
     // Om man inte är på startsidan -> fortsätter inte koden att köras
     if (!adminUser) return;
     // Om det finns användarnamn sparat
-    if (localStorage.getItem("login-key") && window.location.pathname.endsWith("index.html")) {
+    if (localStorage.getItem("login-key")) {
         // Struktur med meddelande
         adminUser.innerHTML = `
         <p> Inloggad som ${role}: <span class="user-span">${usernameKey} </span></p>
