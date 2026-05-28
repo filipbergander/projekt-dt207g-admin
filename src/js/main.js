@@ -2,6 +2,7 @@ import '../sass/main.scss'
 import { checkAuthAccess } from "./authentication/checkAuth.js";
 import { changeFooterText } from "./authentication/checkAuth.js";
 
+"use strict";
 const url = "http://localhost:3000";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -96,16 +97,25 @@ function initNewDinnerForm() {
     const newDishForm = document.getElementById("new-dish-form");
     const newDinnerBtn = document.getElementById("add-dish-btn");
 
+    // Inputs
+    const categoryInput = document.getElementById("dish-category");
+    const nameInput = document.getElementById("dish-name");
+    const priceInput = document.getElementById("dish-price");
+    const descriptionInput = document.getElementById("dish-description");
+
     // Eventlyssnare för formuläret
     if (newDishForm) {
-        newDishForm.addEventListener("submit", (event) => {
+        newDishForm.addEventListener("submit", async(event) => {
             event.preventDefault();
             let errors = [];
 
+            // Är det tänkt att man ska uppdatera en befintlig maträtt?
+            const dinnerId = localStorage.getItem("dinner-id");
+
             // Hämtar värden inom formuläret
-            const dinnerDishPrice = document.getElementById("dish-price").value.trim();
-            const dinnerDishName = document.getElementById("dish-name").value.trim();
-            const dinnerDishDescription = document.getElementById("dish-description").value.trim();
+            const dinnerDishPrice = priceInput.value.trim();
+            const dinnerDishName = nameInput.value.trim();
+            const dinnerDishDescription = descriptionInput.value.trim();
 
             // Specifika felmeddelande för inputs
             if (dinnerDishName === "") errors.push("Du måste fylla i namn!");
@@ -120,12 +130,44 @@ function initNewDinnerForm() {
             if (errors.length > 0) {
                 displayErrorMsg(errors);
                 return; // Stoppar formuläret från att bli submittat
-            } else { // Annars om inga felmeddelanden finns, anropas funktionen
+            }
+            // Kollar om id för en post finns lagrat i localstorage
+            if (dinnerId) {
+                newDinnerBtn.textContent = "Uppdatera maträtten";
+                const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+                await updateDinnerDish(dinnerId);
+                let successMsg = [];
+                successMsg.push("Uppdaterar maträtten!")
+                displaySuccessMsg(successMsg);
+                document.querySelector(".loading-spinner").classList.remove("hidden");
+                setTimeout(() => {
+                    document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+
+                    // Resettar formuläret efter lyckad registrering
+                    successMsgList.innerHTML = "";
+                    categoryInput.value = "Förrätt";
+                    nameInput.value = "";
+                    descriptionInput.value = "";
+                    priceInput.value = 0;
+                    document.querySelector(".error-message ul").innerHTML = "";
+                    localStorage.removeItem("dinner-id");
+                    // Visar listan av maträtter igen
+                    document.getElementById("new-dish-container").classList.add("hidden");
+                    document.getElementById("edit-dish-container").classList.remove("hidden");
+                    // Resettar texter inom formuläret
+                    document.getElementById("dish-form-title").textContent = "Lägg till maträtt"
+                    document.getElementById("add-dish-btn").textContent = "Lägg till maträtt"
+                }, 1000);
+                // Hämtar listan av maträtter 
+                await fetchDinnerDishes();
+            } else {
+
+                /* Annars om inga felmeddelanden eller något lagrat i localstorage för en maträtt finns, anropas funktionen för att använda till att skapa en ny rätt*/
                 createNewDinnerDish();
             }
+
         });
     }
-
 }
 
 // För att logga in en användare
@@ -295,13 +337,14 @@ async function createNewDinnerDish() {
         // Vid lyckat resultat
         document.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
         errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
-        successMsg.push("Ny maträtt skapad!") // Meddelande i DOM att inloggningen gick bra
-        displaySuccessMsg(successMsg); // Visar att inloggningen lyckades i DOM
+        successMsg.push("Ny maträtt skapas!") // Meddelande i DOM att maträtten skapas
+        displaySuccessMsg(successMsg); // Visar meddelandet
         setTimeout(() => {
             document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
 
-            // Resettar formuläret efter lyckad registrering
+            // Resettar formuläret efter lyckad maträtt
             successMsgList.innerHTML = "";
+            categoryInput.value = "Förrätt";
             nameInput.value = "";
             descriptionInput.value = "";
             priceInput.value = 0;
@@ -334,13 +377,13 @@ async function fetchDinnerDishes() {
         if (dinnerDishes.length === 0) {
             loadingText.textContent = "Inga maträtter finns tillagda i middagsmenyn än..."
             loadingText.style.textAlign = "center";
-            dishList.innerHTML = "";
+            //dishList.innerHTML = "";
             return;
         }
         filterDinnerDishes(dinnerDishes);
     } catch (error) {
         console.error("Kunde inte hämta middags-maträtter: ", error);
-        dishList.innerHTML = "";
+        //dishList.innerHTML = "";
         // Felmeddelanden i DOM
         loadingText.textContent = "Kunde inte hämta maträtter för middagsmeny från servern, prova lägg till en ny rätt..."
         loadingText.style.textAlign = "center";
@@ -363,6 +406,27 @@ async function filterDinnerDishes(dinnerDishes) {
     renderCategoryDish(startList, starter);
     renderCategoryDish(mainCourseList, main);
     renderCategoryDish(dessertList, dessert);
+}
+
+async function fetchDinnerById(id) {
+    const token = fetchToken(); // Token används för att se om användaren är behörig
+    try {
+        const response = await fetch(`${url}/dinner/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Kunde inte hämta den specifika maträtten");
+        }
+        const fetchedDish = await response.json();
+        console.log(fetchedDish);
+        return fetchedDish;
+    } catch (error) {
+        console.error("Det gick inte att hämta den specifika maträtten:", error);
+        throw error;
+    }
 }
 
 // Skriver ut maträtterna efter kategori
@@ -589,10 +653,7 @@ function listenDinnerBtns() {
             const deleteBtnId = target.dataset.id; // Knappens dataset-id 
             await deleteDinnerDish(deleteBtnId); // Anropar funktionen med id som argument
             target.closest("article").remove(); // Tar bort artikeln från DOM
-            await fetchDinnerDishes(); // Hämtar uppdaterad lista
         } else if (target.classList.contains("update-dinner-btn")) {
-            console.log("Du klickade på knappen för att uppdatera en måltid! ");
-
             // Hämtar in ID från knappen och sparar till localstorage
             const updateBtnId = target.dataset.id;
             localStorage.setItem("dinner-id", updateBtnId);
@@ -601,7 +662,10 @@ function listenDinnerBtns() {
             newDishContainer.classList.remove("hidden");
             editDishContainer.classList.add("hidden");
 
-            const dishInfo = await updateDinnerDish(updateBtnId);
+            document.getElementById("dish-form-title").textContent = "Uppdatera maträtt"
+            document.getElementById("add-dish-btn").textContent = "Uppdatera maträtt"
+
+            const dishInfo = await fetchDinnerById(updateBtnId);
             fillUpdatedForm(dishInfo);
         }
     });
@@ -612,6 +676,8 @@ function fillUpdatedForm(dishInfo) {
     const nameInput = document.getElementById("dish-name");
     const priceInput = document.getElementById("dish-price");
     const descriptionInput = document.getElementById("dish-description");
+
+    console.log("Dish info: ", dishInfo);
 
     categoryInput.value = dishInfo.category;
     nameInput.value = dishInfo.name;
