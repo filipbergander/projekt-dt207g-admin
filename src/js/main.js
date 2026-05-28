@@ -5,7 +5,7 @@ import { changeFooterText } from "./authentication/checkAuth.js";
 "use strict";
 // Url till backend
 //const url = "http://localhost:3000";
-const url = "https://fb-backend-api-p9fp.onrender.com"
+const url = "https://fb-backend-api-p9fp.onrender.com";
 
 const formResetBtn = document.getElementById("reset-form-btn"); // Knapp för att resetta formulär till maträtt
 
@@ -222,15 +222,25 @@ async function loginUser() {
         });
 
         const data = await response.json(); // Väntar på responsen tillbaka
-        const token = data.response.token; // Token utifrån data
-        const username = data.response.user.username; // Användarnamnet från backend
-        const userRole = data.response.user.role;
+
         // Om token inte finns inom responsen så går inte inloggningen igenom
-        if (!response.ok || !token) {
+        if (!response.ok) {
             document.getElementById("login-spinner").classList.add("hidden"); // Döljer ikonen vid misslyckad respons
+            displayErrorMsg([data.error || "Kunde inte logga in användaren..."]); // Visar felmeddelande från backend eller vanligt
             throw new Error("Kunde inte logga in användaren...");
             return;
         }
+
+        const token = data.response.token; // Token utifrån data
+        const username = data.response.user.username; // Användarnamnet från backend
+        const userRole = data.response.user.role;
+
+        if (!token) {
+            document.getElementById("login-spinner").classList.add("hidden"); // Dölje ikonen 
+            displayErrorMsg(["Ingen token mottagen från servern..."]);
+            return;
+        }
+
         localStorage.setItem("login-key", token); // Sparar token i localstorage
         errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
         document.getElementById("login-spinner").classList.remove("hidden"); // Visar laddningsikonen

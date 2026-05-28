@@ -22,14 +22,14 @@
 
 #admin-user {
     background: #2b2b2c;
-    padding: clamp(0.25em, 1vw, 0.75em) clamp(0.5em, 1.5vw, 1.5em);
+    padding: clamp(0.75em, 1vw, 0.75em) clamp(0.75em, 1.5vw, 1.5em);
     border-radius: 12px;
     margin-bottom: 1.5em;
     color: #fff;
     box-shadow: 0 4px 12px rgba(29, 19, 19, 0.25);
     p {
         margin: 0.1em 0;
-        font-size: clamp(0.9em, 2vw, 1.1em);
+        font-size: clamp(1em, 2vw, 1.1em);
         line-height: 1.4;
     }
     .user-span {
