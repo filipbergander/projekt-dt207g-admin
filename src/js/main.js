@@ -81,7 +81,12 @@ function initRegisterForm() {
             const registerRole = document.getElementById("register-role").value.trim();
 
             // Specifika felmeddelande för inputs
-            if (registerEmail === "") errors.push("Du måste fylla i email!");
+            if (registerEmail === "") {
+                errors.push("Du måste fylla i email!");
+            } else if (!registerEmail.includes("@") || !registerEmail.includes(".") || registerEmail.length < 5) {
+                errors.push("Du måste ange en giltig email-adress!");
+            }
+
             if (registerPassword === "") {
                 errors.push("Du måste fylla i lösenord!")
             } else if (registerPassword.length < 6) {
