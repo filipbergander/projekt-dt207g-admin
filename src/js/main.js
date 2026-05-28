@@ -3,7 +3,8 @@ import { checkAuthAccess } from "./authentication/checkAuth.js";
 import { changeFooterText } from "./authentication/checkAuth.js";
 
 "use strict";
-const url = "http://localhost:3000";
+//const url = "http://localhost:3000";
+const url = "https://fb-backend-api-p9fp.onrender.com"
 
 document.addEventListener("DOMContentLoaded", () => {
     checkAuthAccess();
@@ -125,19 +126,23 @@ function initNewDinnerForm() {
             const categoriesAllowed = ["Förrätt", "Huvudrätt", "Efterrätt"];
 
             // Specifika felmeddelande för inputs
-            if (!categoriesAllowed.includes(dinnerCategory.trim().toLowerCase())) {
+            if (dinnerCategory === "" || dinnerCategory === "Välj kategori") {
+                errors.push("Du måste välja en kategori!");
+            } else if (!categoriesAllowed.includes(dinnerCategory)) {
                 errors.push("Fy! Manipulera inte kategorin...");
             }
 
-            if (dinnerDishName === "")
+            if (dinnerDishName === "") {
                 errors.push("Du måste fylla i namn!");
-            if (dinnerDishName.length < 3) {
+            } else if (dinnerDishName.length < 3) {
                 errors.push("Namnet måste vara längre än 3 bokstäver...");
             } else if (dinnerDishName.length > 40) {
                 errors.push("Namnet kan inte vara längre än 40 bokstäver...");
             }
 
-            if (dinnerDishPrice <= 0) {
+            if (dinnerDishPrice === "") {
+                errors.push("Ange pris!")
+            } else if (dinnerDishPrice <= 0) {
                 errors.push("Priset måste vara större än 0 kr");
             } else if (dinnerDishPrice > 1000) {
                 errors.push("Priset kan inte vara dyrare än 1000 kr")
@@ -323,7 +328,8 @@ async function createNewDinnerDish() {
     const description = descriptionInput.value.trim();
 
     const newDishForm = document.getElementById("new-dish-form");
-    const errorMsgList = document.querySelector(".error-message ul"); // Felmeddelanden
+    const errorMsgList = document.querySelector(".error-message ul");
+    // Felmeddelanden
     const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
     successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
 
@@ -701,7 +707,7 @@ function fillUpdatedForm(dishInfo) {
 // Resettar formuläret för en middagsmaträtt
 function resetDishForm() {
     // Inputs
-    document.getElementById("dish-category").value = "Förrätt";
+    document.getElementById("dish-category").value = "Välj kategori";
     document.getElementById("dish-name").value = "";
     document.getElementById("dish-price").value = "";
     document.getElementById("dish-description").value = "";
