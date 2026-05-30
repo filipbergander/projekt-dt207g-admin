@@ -40,10 +40,27 @@
 
 #loading-text {
     animation: pulseText 1.5s infinite;
-    margin-bottom: 3em;
+    margin: 1em 0 1em;
+    color: #b80275;
+}
+
+.info-text {
+    margin-bottom: 1.5em auto;
+    font-size: 1.1em;
+    text-align: left;
+    display: inline-flex;
+    max-width: 60ch;
+    line-height: 1.3;
 }
 
 #loading-images-text {
     animation: pulseText 1.5s infinite;
-    margin-bottom: 3em;
+    margin: 1em 0 1em;
+    color: #b80275;
+}
+
+@media screen and (max-width: 475px) {
+    .info-text {
+        font-size: 1em;
+    }
 }

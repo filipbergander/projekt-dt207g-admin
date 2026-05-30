@@ -155,6 +155,12 @@
     }
 }
 
+@media screen and (max-width: 425px) {
+    .dinner-btns-container {
+        flex-direction: column;
+    }
+}
+
 @media screen and (max-width: 370px) {
     #new-dish-container {
         padding: 1em 0;

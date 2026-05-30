@@ -69,6 +69,10 @@
         padding: 0.5em 0.5em;
         font-size: 1.1em;
     }
+    @media screen and (max-width: 475px) {
+        padding: 0.75em 1em;
+        font-size: 1em;
+    }
 }
 
 @mixin dishBtn($btn-color-primary, $color-text) {
