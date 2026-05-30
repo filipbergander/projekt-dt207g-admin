@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osteria | Lägg till maträtt</title>
+    <title>Trattoria | Lägg till maträtt</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 </head>
 
 <body>
     <header>
-        <a href="index.html" class="logo"><span id="logo" class="material-symbols-outlined">local_pizza</span>Osteria
+        <a href="index.html" class="logo"><span id="logo" class="material-symbols-outlined">local_pizza</span>Trattoria
             Lema</a>
         <nav>
             <ul class="dashboard-list">
@@ -29,9 +29,12 @@
                 <span class="material-symbols-outlined">settings</span>
                 Hantera maträtter
             </button>
+            <button id="image-btn" class="cta-btn">
+                <span class="material-symbols-outlined">photo_library</span>
+                Kategori-bilder
+            </button>
         </div>
         <section id="new-dish-container" class="dish-container hidden">
-
             <form id="new-dish-form" method="post">
                 <h2 id="dish-form-title">Lägg till maträtt</h2>
                 <button id="reset-form-btn" class="reset-btn" type="button"><span
@@ -43,15 +46,14 @@
                 <div class="success-message">
                     <ul></ul><span class="loading-spinner hidden"></span>
                 </div>
-
                 <div class="input-area">
                     <label for="dish-category">Kategori</label>
                     <select id="dish-category" name="dish-category">
-                         <option value="Välj kategori">Välj kategori</option>
+                        <option value="Välj kategori">Välj kategori</option>
                         <option value="Förrätt">Förrätt</option>
                         <option value="Huvudrätt">Huvudrätt</option>
                         <option value="Efterrätt">Efterrätt</option>
-                         <option value="Dryck">Dryck</option>
+                        <option value="Dryck">Dryck</option>
                     </select>
                 </div>
 
@@ -62,7 +64,7 @@
 
                 <div class="input-area">
                     <label for="dish-price">Pris</label>
-                    <input type="number" id="dish-price" name="dish-price" placeholder="Skriv pris">
+                    <input type="number" id="dish-price" name="dish-price" placeholder="Ange pris">
                 </div>
 
                 <div class="input-area">
@@ -95,9 +97,68 @@
                 </section>
             </div>
         </section>
+        <section id="add-new-image-container" class="add-new-image-container hidden">
+            <form id="add-image-form" method="post">
+                <h2 id="image-form-title">Lägg till bild</h2>
+                <button id="reset-image-form-btn" class="reset-btn" type="button"><span
+                    class="material-symbols-outlined">restart_alt</span></button>
+                <div class="error-message">
+                    <ul></ul>
+                </div>
+
+                <div class="success-message">
+                    <ul></ul><span class="loading-spinner hidden"></span>
+                </div>
+
+                <div class="input-area">
+                    <label for="image-category">Kategori för bilden</label>
+                    <select id="image-category" name="image-category">
+                    <option value="Välj kategori">Välj kategori</option>
+                    <option value="Förrätt">Förrätt</option>
+                    <option value="Huvudrätt">Huvudrätt</option>
+                    <option value="Efterrätt">Efterrätt</option>
+                    <option value="Dryck">Dryck</option>
+                </select>
+                </div>
+
+                <div class="input-area">
+                    <label for="image-file">Välj bild</label>
+                    <input type="file" id="image-file" name="image-file" accept="image/jpeg, image/png, image/gif">
+                </div>
+
+                <div class="input-area">
+                    <label for="image-name">Alt-text</label>
+                    <input type="text" id="image-name" name="image-name" placeholder="Skriv alt-text">
+                </div>
+
+                <button id="add-image-btn" class="submit-image-btn" type="submit">Lägg till bild</button>
+            </form>
+        </section>
+        <section id="image-container" class="image-container hidden">
+            <h2>Kategori-bilder</h2>
+            <p id="loading-images-text"></p>
+            <div class="images-list">
+                <article>
+                    <h3>Förrätt</h3>
+                    <div id="starter-images" class="image-column"></div>
+                </article>
+                <article>
+                    <h3>Huvudrätt</h3>
+                    <div id="main-course-images" class="image-column"></div>
+                </article>
+                <article>
+                    <h3>Efterrätt</h3>
+                    <div id="dessert-images" class="image-column"></div>
+                </article>
+                <article>
+                    <h3>Dryck</h3>
+                    <div id="drink-images" class="image-column"></div>
+                </article>
+            </div>
+        </section>
     </main>
     <footer id="footer">
-        <p> Admin-sida för Osteria Lema</p>
+        <p> Admin-sida för Trattoria Lema</p>
         <a href="register.html">Registrera användare</a>
     </footer>
     <script type="module" src="/src/js/main.js"></script>

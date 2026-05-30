@@ -64,6 +64,14 @@
     @include dishBtn($btn-color-primary, $color-text-light);
 }
 
+#image-btn {
+    @include cta-page-btn($btn-color-grey, $color-text-light);
+}
+
+#add-image-btn {
+    @include cta-page-btn($btn-image, $color-text-light);
+}
+
 @media screen and (max-width: 768px) {
     #logout-button {
         font-size: 1.1em;

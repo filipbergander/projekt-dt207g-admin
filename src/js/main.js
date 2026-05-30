@@ -6,23 +6,37 @@ import { changeFooterText } from "./authentication/checkAuth.js";
 // Url till backend
 const url = "http://localhost:3000";
 //const url = "https://fb-backend-api-p9fp.onrender.com";
-
+let rotateDishIcon = 0; // Variabel för att rotera ikon till att resetta matformuläret
+let rotateImageIcon = 0; // Variabel för att rotera ikon till att resetta bildformuläret
 const formResetBtn = document.getElementById("reset-form-btn"); // Knapp för att resetta formulär till maträtt
+const imageFormResetBtn = document.getElementById("reset-image-form-btn"); // Knapp för att resetta formulär till bild
 
 document.addEventListener("DOMContentLoaded", () => {
     checkAuthAccess(); // Middleware för att se över om användaren är behörig
     initLoginForm(); // Formuläret för att logga in en användare
     initRegisterForm(); // Formuläret för att registrera en ny användare
     initNewDinnerForm() // Formuläret för att skapa en ny maträtt
+    initNewImageForm() // Formuläret för att skapa en ny bild
     logoutUser(); //För att logga ut en användare
     listenDinnerBtns(); // Lyssnar på knappar för specifika maträtter delete/uppdatera
     changeDinnerForm(); // Växlar mellan att visa maträtter eller formuläret
     displayUserUi(); // Visar inloggade användare sina användarnamn på startsidan
+    fetchCategoryImages(); // Hämtar in bilder som lagts till för varje kategori av maträtt¨
 
     // Om man är på den sidan med knappen
     if (formResetBtn) {
         formResetBtn.addEventListener("click", () => {
+            rotateDishIcon += -360; // Snurrar ett varv vid varje klick
+            formResetBtn.style.transform = `rotate(${rotateDishIcon}deg)`; // Roterar ikonen varje gång ett varv
             resetDishForm(); // Resettar formuläret
+        });
+    }
+
+    if (imageFormResetBtn) {
+        imageFormResetBtn.addEventListener("click", () => {
+            rotateImageIcon += -360; // Snurrar ett varv vid varje klick
+            imageFormResetBtn.style.transform = `rotate(${rotateImageIcon}deg)`; // Roterar ikonen varje gång ett varv
+            resetImageForm(); // Resettar formuläret
         });
     }
 });
@@ -119,6 +133,8 @@ function initNewDinnerForm() {
     const priceInput = document.getElementById("dish-price");
     const descriptionInput = document.getElementById("dish-description");
 
+    // Felmeddelanden containern
+    const errorMsgList = newDishForm.querySelector(".error-message ul");
     // Eventlyssnare för formuläret
     if (newDishForm) {
         newDishForm.addEventListener("submit", async(event) => {
@@ -169,7 +185,7 @@ function initNewDinnerForm() {
 
             // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
             if (errors.length > 0) {
-                displayErrorMsg(errors);
+                displayErrorMsg(errors, errorMsgList);
                 return; // Stoppar formuläret från att bli submittat
             }
             // Kollar om id för en post finns lagrat i localstorage, -> vid uppdatering av maträtt
@@ -201,6 +217,87 @@ function initNewDinnerForm() {
                 createNewDinnerDish();
             }
 
+        });
+    }
+}
+
+// formulär för att lägga till en ny bild med felhantering
+function initNewImageForm() {
+
+    // Formulär och knappar
+    const addImageForm = document.getElementById("add-image-form");
+    const addImageBtn = document.getElementById("add-image-btn");
+
+    // Inputs för bilder
+    const imageCategoryInput = document.getElementById("image-category");
+    const fileInput = document.getElementById("image-file");
+    const altInput = document.getElementById("image-name");
+
+    const errorMsgList = addImageForm.querySelector(".error-message ul"); // Felmeddelanden containern
+
+    // Eventlyssnare för formuläret till bilder
+    if (addImageForm) {
+        addImageForm.addEventListener("submit", async(event) => {
+            event.preventDefault();
+            let errors = [];
+
+            // Är det tänkt att man ska uppdatera en befintlig bild?
+            //const ImageId = localStorage.getItem("image-id");
+
+            // Hämtar värden inom formuläret
+            const imageCategory = imageCategoryInput.value.trim();
+            const imageAlt = altInput.value.trim();
+
+            const categoriesAllowed = ["Förrätt", "Huvudrätt", "Efterrätt", "Dryck"];
+
+            // Specifika felmeddelande för inputs till bilder
+            if (imageCategory === "" || imageCategory === "Välj kategori") {
+                errors.push("Du måste välja en kategori!");
+            } else if (!categoriesAllowed.includes(imageCategory)) {
+                errors.push("Fy! Manipulera inte kategorin...");
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                errors.push("Lägg till en bildfil!");
+            }
+
+            if (imageAlt === "") {
+                errors.push("Lägg till en alt-text!")
+            } else if (imageAlt.length > 50) {
+                errors.push("Alt-texter kan inte vara längre än 50 tecken...");
+            }
+
+            // Om felmeddelanden finns visas dem genom funktionen displayErrorMsg
+            if (errors.length > 0) {
+                displayErrorMsg(errors, errorMsgList);
+                return; // Stoppar formuläret från att bli submittat
+            }
+            await createNewImage();
+            await fetchCategoryImages();
+            // Kollar om id för en post finns lagrat i localstorage, -> vid uppdatering av en bild
+            /* if (ImageId) {
+                 addImageBtn.textContent = "Uppdatera bilden";
+                 const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+                 await updateImage(ImageId);
+                 let successMsg = [];
+                 successMsg.push("Uppdaterar bilden!")
+                 displaySuccessMsg(successMsg);
+                 document.querySelector(".loading-spinner").classList.remove("hidden");
+                 setTimeout(() => {
+                     document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+
+                     // Resettar formuläret när bilden uppdaterats
+                     resetImageForm();
+                 }, 1000);
+
+                 // Felmeddelanden i formuläret
+                 document.querySelector(".error-message ul").innerHTML = "";
+                 await fetchCategoryImages();
+             } else {
+
+                 // Annars om inga felmeddelanden eller något lagrat i localstorage för en bild finns, anropas funktionen för att använda till att skapa en ny bild
+               
+             }*/
         });
     }
 }
@@ -313,7 +410,7 @@ async function createUser() {
         if (!response.ok) {
             document.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
             const BackendError = data.error || "Kunde inte skapa en ny användare..."; // Felmeddelande från backend eller vanligt
-            showError(BackendError); // Visar felmeddelanden från backend, ex upptagna användarnamn/email
+            showError([BackendError]); // Visar felmeddelanden från backend, ex upptagna användarnamn/email
             return;
         }
 
@@ -334,7 +431,7 @@ async function createUser() {
         }, 1000);
     } catch (error) {
         console.error("Kunde inte skapa en ny användare: ", error);
-        showError("Oväntat fel. Försök igen om en stund!"); // Visar felmeddelande i DOM
+        showError(["Oväntat fel. Försök igen om en stund!"], errorMsgList); // Visar felmeddelande i DOM
     }
 }
 // Skapar en ny maträtt genom databasen
@@ -351,9 +448,9 @@ async function createNewDinnerDish() {
     const description = descriptionInput.value.trim();
 
     const newDishForm = document.getElementById("new-dish-form");
-    const errorMsgList = document.querySelector(".error-message ul");
+    const errorMsgList = newDishForm.querySelector(".error-message ul");
     // Felmeddelanden
-    const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+    const successMsgList = newDishForm.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
     successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
 
     const token = fetchToken(); // Kollar om token finns för att använda i anropet
@@ -361,7 +458,7 @@ async function createNewDinnerDish() {
     // Meddelanden i DOM
     let errors = [];
     let successMsg = [];
-    // Skapar en ny användare genom routen i backend
+    // Lägger till ny maträtt genom routen i backend
     try {
         const response = await fetch(`${url}/dinner`, {
             method: "POST",
@@ -374,41 +471,42 @@ async function createNewDinnerDish() {
         const data = await response.json();
         // Vid misslyckat resultat
         if (!response.ok) {
-            document.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
+            newDishForm.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
             const BackendError = data.error || "Kunde inte skapa en ny maträtt, ej autentiserad..."; // Felmeddelande från backend eller vanligt
-            showError(BackendError); // Visar felmeddelanden från backend, ex upptagna användarnamn/email
+            showError([BackendError], errorMsgList); // Visar felmeddelanden från backend
             return;
         }
 
         // Vid lyckat resultat
-        document.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
+        newDishForm.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
         errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
         successMsg.push("Ny maträtt skapas!") // Meddelande i DOM att maträtten skapas
-        displaySuccessMsg(successMsg); // Visar meddelandet
+        displaySuccessMsg(successMsg, successMsgList); // Visar meddelandet
         setTimeout(() => {
-            document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+            newDishForm.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
 
             // Resettar formuläret efter lyckad maträtt
             resetDishForm();
         }, 1000);
     } catch (error) {
         console.error("Kunde inte skapa en ny middags-maträtt: ", error);
-        showError("Oväntat fel. Försök igen om en stund!"); // Visar felmeddelande i DOM
+        showError(["Oväntat fel. Försök igen om en stund!"], errorMsgList); // Visar felmeddelande i DOM
     }
 }
 // Hämtar maträtter från middagsmeny i backend
 async function fetchDinnerDishes() {
     const dishList = document.getElementById("dishes-list");
     const loadingText = document.getElementById("loading-text");
-    const token = fetchToken(); // Token används för att se om användaren är behörig
+    //const token = fetchToken(); // Token används för att se om användaren är behörig
     // Meddelande innan data har hämtats i backend
     loadingText.textContent = "Hämtar maträtter från databasen, vänta på att servern ska vakna..."
     try {
-        const response = await fetch(`${url}/dinner`, {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        });
+        const response = await fetch(`${url}/dinner`);
+        /*, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+               });*/
 
         if (!response.ok) {
             throw Error(`Fel hos server, kunde inte hämta maträtter : ${response.status}`)
@@ -452,6 +550,26 @@ async function filterDinnerDishes(dinnerDishes) {
     renderCategoryDish(drinkList, drink);
 }
 
+async function filterDinnerImages(dataImages) {
+    // Filtrerar efter kategorier som finns för bilderna, samma som maträtter
+    const starterImages = dataImages.filter(image => image.category.trim() === "Förrätt");
+    const mainImages = dataImages.filter(image => image.category.trim() === "Huvudrätt");
+    const dessertImages = dataImages.filter(image => image.category.trim() === "Efterrätt");
+    const drinkImages = dataImages.filter(image => image.category.trim() === "Dryck");
+
+    // Container för bilder inom varje kategori av maträtt
+    const startImageContainer = document.getElementById("starter-images");
+    const mainImageContainer = document.getElementById("main-course-images");
+    const dessertImageContainer = document.getElementById("dessert-images");
+    const drinkImageContainer = document.getElementById("drink-images");
+
+    // Anropar funktionen för att visa bilderna inom sina containers
+    renderCategoryImages(startImageContainer, starterImages);
+    renderCategoryImages(mainImageContainer, mainImages);
+    renderCategoryImages(dessertImageContainer, dessertImages);
+    renderCategoryImages(drinkImageContainer, drinkImages);
+}
+
 async function fetchDinnerById(id) {
     const token = fetchToken(); // Token används för att se om användaren är behörig
     try {
@@ -465,7 +583,6 @@ async function fetchDinnerById(id) {
             throw new Error("Kunde inte hämta den specifika maträtten");
         }
         const fetchedDish = await response.json();
-        console.log(fetchedDish);
         return fetchedDish;
     } catch (error) {
         console.error("Det gick inte att hämta den specifika maträtten:", error);
@@ -478,7 +595,7 @@ async function renderCategoryDish(container, dinnerDishes) {
 
     // Om ingen container-element för kategori finns
     if (!container) return; // Resten av koden körs inte
-    container.innerHTML = ""; // Tömmer innan lägger på nya maträtter
+    container.innerHTML = ""; // Tömmer innan det läggs på nya maträtter
 
     // Skriver ut maträtterna efter kategori
     dinnerDishes.forEach(dish => {
@@ -577,35 +694,149 @@ async function updateDinnerDish(id) {
     }
 }
 
+async function fetchCategoryImages() {
+    const imageSection = document.getElementById("image-section");
+    const loadingImageText = document.getElementById("loading-images-text");
+    loadingImageText.textContent = "Hämtar bilder från databasen, vänta på att servern ska vakna..."
+    try {
+        const response = await fetch(`${url}/dinner/category-images`);
+
+        if (!response.ok) {
+            throw new Error("Kunde inte hämta kategori-bilder...");
+        }
+
+        const dataImages = await response.json(); // Data
+        loadingImageText.textContent = ""; // Tömmer tidigare text innan nya bilder hämtas
+        if (dataImages.length === 0) {
+            loadingImageText.textContent = "Inga bilder finns tillagda i databasen än..."
+            loadingImageText.style.textAlign = "center";
+            return;
+        }
+        filterDinnerImages(dataImages) // Anropar funktionen för att filtrera bilderna efter deras kategorier
+    } catch (error) {
+        console.error("Kunde inte hämta kategori-bilder: ", error);
+        loadingImageText.textContent = "Kunde inte hämta bilder från servern, prova logga in igen..."
+        loadingImageText.style.textAlign = "center";
+    }
+}
+// Skapar en ny bild genom formuläret till databsen
+async function createNewImage(event) {
+    const imageCategoryInput = document.getElementById("image-category");
+    const fileInput = document.getElementById("image-file");
+    const altInput = document.getElementById("image-name");
+
+    // Inputs inom formuläret 
+    const imageCategory = imageCategoryInput.value.trim();
+    const imageFileName = fileInput.files[0];
+    const imageAlt = altInput.value.trim();
+
+    const newImageForm = document.getElementById("add-image-form");
+    const errorMsgList = newImageForm.querySelector(".error-message ul");
+    // Felmeddelanden
+    const successMsgList = newImageForm.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
+    successMsgList.innerHTML = ""; // Tar bort tidigare inloggningsmeddelanden
+
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
+
+    // Meddelanden i DOM
+    let errors = [];
+    let successMsg = [];
+
+    // Formdata för att kunna skicka bildfilen inom anropet till backend
+    const imageData = new FormData();
+    imageData.append("category", imageCategory);
+    imageData.append("alt", imageAlt);
+    imageData.append("image", imageFileName);
+
+    // Lägger till bild genom routen i backend
+    try {
+        const response = await fetch(`${url}/dinner/category-images`, {
+            method: "POST",
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            body: imageData
+        });
+        const data = await response.json();
+        // Vid misslyckat resultat
+        if (!response.ok) {
+            newImageForm.querySelector(".loading-spinner").classList.add("hidden"); // Visar ingen laddningsikon
+            const BackendError = data.error || "Kunde inte lägga till bilden, ej autentiserad..."; // Felmeddelande från backend eller vanligt
+            showError([BackendError], errorMsgList); // Visar felmeddelanden från backend
+            return;
+            console.error("Kunde inte lägga till bilden: ", error);
+        }
+
+        // Vid lyckat resultat
+        newImageForm.querySelector(".loading-spinner").classList.remove("hidden"); // Visar laddningsikonen
+        errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
+        successMsg.push("Bilden läggs till!") // Meddelande i DOM att bilden läggs till
+        displaySuccessMsg(successMsg, successMsgList); // Visar meddelandet
+        setTimeout(() => {
+            newImageForm.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+            // Resettar formuläret när bilden blivit tillagd
+            resetImageForm();
+        }, 1000);
+    } catch (error) {
+        console.error("Kunde inte lägga till bilden: ", error);
+        showError(["Oväntat fel. Försök igen om en stund!"], errorMsgList); // Visar felmeddelande i DOM
+    }
+}
+
+async function renderCategoryImages(container, categoryImages) {
+
+    if (!container) return; // Om ingen container av kategorier för bilderna finns, return
+    container.innerHTML = ""; // Tömmer innan det läggs på nya bilder
+    console.log(categoryImages);
+    categoryImages.forEach(image => {
+        const div = document.createElement("div"); //div för att lägga bilden inom
+        div.classList.add("image-article");
+
+        const imgEl = document.createElement("img"); // skapar img-element
+        imgEl.src = image.image; // Bildens url
+        imgEl.alt = image.alt; // Alt-texten för bilden som angetts
+
+        const p = document.createElement("p");
+        p.textContent = `Alt-text: ${image.alt}`; // Visar alt-texten under varje bild
+
+        div.appendChild(imgEl); // Lägger till bilden inom div
+        div.appendChild(p); // Lägger till alt-texten inom diven
+        container.appendChild(div); // Lägger till div inom varje container
+    });
+
+}
 // Funktion som skriver ut felmeddelanden i DOM
-function displayErrorMsg(errors) {
-    const errorMsgList = document.querySelector(".error-message ul");
-    errorMsgList.innerHTML = "";
+function displayErrorMsg(errors, UlElement) {
+    /*const errorMsgList = document.querySelector(".error-message ul");
+    errorMsgList.innerHTML = "";*/
+    UlElement.innerHTML = "";
     errors.forEach(error => {
         const liEl = document.createElement("li"); // Skapar ett li för varje specifikt felmeddelande
         liEl.textContent = error; // Tillger li-elementet texten som genererats inom arrayen av errors
-        errorMsgList.appendChild(liEl); // Lägger till li-elementet inom felmeddelande-listan
+        UlElement.appendChild(liEl); // Lägger till li-elementet inom felmeddelande-listan
     });
 }
 
 // Skapar och visar felmeddelanden som finns i backend(API), till frontend i DOM
-function showError(error) {
-    const errorMsgList = document.querySelector(".error-message ul");
-    errorMsgList.innerHTML = "";
-    const li = document.createElement("li");
-    li.textContent = error;
-    errorMsgList.appendChild(li);
+function showError(errors, UlElement) {
+    UlElement.innerHTML = "";
+    errors.forEach(error => {
+        const liEl = document.createElement("li");
+        liEl.textContent = error;
+        UlElement.appendChild(liEl);
+    });
 }
 
 // Funktion för att visa inloggning fungerade i DOM
-function displaySuccessMsg(successMsg) {
-
+function displaySuccessMsg(messages, UlElement) {
     //Lyckas success med meddelande inom DOM
-    const successMsgList = document.querySelector(".success-message ul");
-    successMsgList.innerHTML = "";
-    const liEl = document.createElement("li");
-    liEl.textContent = successMsg;
-    successMsgList.appendChild(liEl);
+    //const successMsgList = document.querySelector(".success-message ul");
+    UlElement.innerHTML = "";
+    messages.forEach(message => {
+        const liEl = document.createElement("li");
+        liEl.textContent = message;
+        UlElement.appendChild(liEl);
+    });
 }
 
 // Lägger till användarnamn inom UI för inläggs-sidan
@@ -633,13 +864,17 @@ function changeDinnerForm() {
     // Knappar inom middag-sidan
     const newDishBtn = document.getElementById("new-dish-btn");
     const editDishBtn = document.getElementById("edit-dish-btn");
+    const addImageBtn = document.getElementById("image-btn");
 
     // Formulär inom middag-sidan
     const newDishForm = document.getElementById("new-dish-form");
+    const newImageForm = document.getElementById("add-image-form");
 
     // Sektioner inom middag-sidan
     const newDishContainer = document.getElementById("new-dish-container");
     const editDishContainer = document.getElementById("edit-dish-container");
+    const imageContainer = document.getElementById("image-container");
+    const newImageContainer = document.getElementById("add-new-image-container");
 
     // Visar formuläret för en ny maträtt
     if (newDishBtn) {
@@ -649,6 +884,12 @@ function changeDinnerForm() {
 
             editDishContainer.classList.add("hidden");
             editDishBtn.classList.remove("active");
+
+            imageContainer.classList.add("hidden");
+            addImageBtn.classList.remove("active");
+
+            newImageContainer.classList.add("hidden");
+            newImageForm.classList.add("hidden");
 
         });
     }
@@ -660,11 +901,36 @@ function changeDinnerForm() {
             editDishContainer.classList.remove("hidden");
             editDishBtn.classList.add("active");
 
+            // Döljer formulär och container för att lägga till en maträtt
             newDishContainer.classList.add("hidden");
             newDishBtn.classList.remove("active");
+
+            // Döljer formulär och container för bilder
+            imageContainer.classList.add("hidden");
+            addImageBtn.classList.remove("active");
+
+            newImageContainer.classList.add("hidden");
+            newImageForm.classList.add("hidden");
         });
     }
 
+    // Visar listan av kategori-bilder samt formuläret
+    if (addImageBtn) {
+        addImageBtn.addEventListener("click", () => {
+            fetchCategoryImages(); // Hämtar in alla kategori-bilder
+            imageContainer.classList.remove("hidden");
+            addImageBtn.classList.add("active");
+            newImageContainer.classList.remove("hidden");
+            newImageForm.classList.remove("hidden");
+
+            // Döljer formulär med containers för att se och lägga till maträtter
+            newDishContainer.classList.add("hidden");
+            newDishBtn.classList.remove("active");
+
+            editDishContainer.classList.add("hidden");
+            editDishBtn.classList.remove("active");
+        });
+    }
 }
 
 // Loggar ut användare
@@ -717,13 +983,15 @@ function listenDinnerBtns() {
         }
     });
 }
-
+// Fyller i formuläret med data från backend för en specifik maträtt -> uppdatera
 function fillUpdatedForm(dishInfo) {
+    // Input i formuläret
     const categoryInput = document.getElementById("dish-category");
     const nameInput = document.getElementById("dish-name");
     const priceInput = document.getElementById("dish-price");
     const descriptionInput = document.getElementById("dish-description");
 
+    // Formuläret får data från backend för den specifika maträtten som ska uppdateras
     categoryInput.value = dishInfo.category;
     nameInput.value = dishInfo.name;
     priceInput.value = dishInfo.price;
@@ -732,6 +1000,7 @@ function fillUpdatedForm(dishInfo) {
 
 // Resettar formuläret för en middagsmaträtt
 function resetDishForm() {
+    const newDishForm = document.getElementById("new-dish-form");
     // Inputs
     document.getElementById("dish-category").value = "Välj kategori";
     document.getElementById("dish-name").value = "";
@@ -739,14 +1008,32 @@ function resetDishForm() {
     document.getElementById("dish-description").value = "";
 
     // Meddelanden i formuläret
-    document.querySelector(".success-message ul").innerHTML = "";
-    document.querySelector(".error-message ul").innerHTML = "";
+    newDishForm.querySelector(".success-message ul").innerHTML = "";
+    newDishForm.querySelector(".error-message ul").innerHTML = "";
 
     // Texter
     document.getElementById("dish-form-title").textContent = "Lägg till maträtt"
     document.getElementById("add-dish-btn").textContent = "Lägg till maträtt"
         // Localstorage key
     localStorage.removeItem("dinner-id");
+}
+// Resettar formuläret för kategori-bilder
+function resetImageForm() {
+    const newImageForm = document.getElementById("add-image-form");
+    // Inputs
+    document.getElementById("image-category").value = "Välj kategori";
+    document.getElementById("image-file").value = "";
+    document.getElementById("image-name").value = "";
+
+    // Meddelanden i formuläret
+    newImageForm.querySelector(".success-message ul").innerHTML = "";
+    newImageForm.querySelector(".error-message ul").innerHTML = "";
+
+    // Texter
+    document.getElementById("image-form-title").textContent = "Lägg till bild"
+    document.getElementById("add-image-btn").textContent = "Lägg till bild"
+        // Localstorage key
+    localStorage.removeItem("image-id");
 }
 
 // Hämtar in token från localstorage
