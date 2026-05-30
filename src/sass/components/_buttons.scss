@@ -72,6 +72,14 @@
     @include cta-page-btn($btn-image, $color-text-light);
 }
 
+.delete-image-btn {
+    @include dishBtn($btn-color-dinner, $color-text-light);
+}
+
+.update-image-btn {
+    @include dishBtn($btn-color-primary, $color-text-light);
+}
+
 @media screen and (max-width: 768px) {
     #logout-button {
         font-size: 1.1em;

@@ -51,3 +51,13 @@
     @extend #new-dish-container;
     background-color: #6e6a6d;
 }
+
+.image-row-btns {
+    @extend .dish-row-btns;
+    justify-content: center;
+}
+
+.image-article {
+    @extend .dinner-article;
+    background-color: #d0d0d0;
+}
