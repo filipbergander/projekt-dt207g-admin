@@ -249,7 +249,7 @@ function initNewImageForm() {
             let errors = [];
 
             // Är det tänkt att man ska uppdatera en befintlig bild?
-            //const ImageId = localStorage.getItem("image-id");
+            const ImageId = localStorage.getItem("image-id");
 
             // Hämtar värden inom formuläret
             const imageCategory = imageCategoryInput.value.trim();
@@ -260,6 +260,9 @@ function initNewImageForm() {
             // Felmeddelanden containern
             const errorMsgList = addImageForm.querySelector(".error-message ul");
 
+            // Meddelanden vid lyckat resultat
+            const successMsgList = addImageForm.querySelector(".success-message ul");
+            const loadingSpinner = addImageForm.querySelector(".loading-spinner"); // Ikon
 
             // Specifika felmeddelande för inputs till bilder
             if (imageCategory === "" || imageCategory === "Välj kategori") {
@@ -268,8 +271,10 @@ function initNewImageForm() {
                 errors.push("Fy! Manipulera inte kategorin...");
             }
 
-            if (!fileInput.files || fileInput.files.length === 0) {
-                errors.push("Lägg till en bildfil!");
+            if (!ImageId) {
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    errors.push("Lägg till en bildfil!");
+                }
             }
 
             if (imageAlt === "") {
@@ -283,32 +288,42 @@ function initNewImageForm() {
                 displayErrorMsg(errors, errorMsgList);
                 return; // Stoppar formuläret från att bli submittat
             }
-            await createNewImage();
-            await fetchCategoryImages();
+
             // Kollar om id för en post finns lagrat i localstorage, -> vid uppdatering av en bild
-            /* if (ImageId) {
-                 addImageBtn.textContent = "Uppdatera bilden";
-                 const successMsgList = document.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
-                 await updateImage(ImageId);
-                 let successMsg = [];
-                 successMsg.push("Uppdaterar bilden!")
-                 displaySuccessMsg(successMsg);
-                 document.querySelector(".loading-spinner").classList.remove("hidden");
-                 setTimeout(() => {
-                     document.querySelector(".loading-spinner").classList.add("hidden"); // Döljer ikonen
+            if (ImageId) {
+                addImageBtn.textContent = "Uppdatera bildens information";
+                const result = await updateCategoryImage(ImageId);
 
-                     // Resettar formuläret när bilden uppdaterats
-                     resetImageForm();
-                 }, 1000);
-
-                 // Felmeddelanden i formuläret
-                 document.querySelector(".error-message ul").innerHTML = "";
-                 await fetchCategoryImages();
-             } else {
-
-                 // Annars om inga felmeddelanden eller något lagrat i localstorage för en bild finns, anropas funktionen för att använda till att skapa en ny bild
-               
-             }*/
+                if (result.error) {
+                    displayErrorMsg([result.error], errorMsgList);
+                    return;
+                }
+                let successMsg = [];
+                successMsg.push("Uppdaterar bilden!")
+                displaySuccessMsg(successMsg, successMsgList);
+                loadingSpinner.classList.remove("hidden");
+                errorMsgList.innerHTML = ""; // Tömmer eventuella felmeddelanden i formuläret
+                setTimeout(() => {
+                    loadingSpinner.classList.add("hidden"); // Döljer ikonen
+                    resetImageForm(); // Resettar formuläret när bilden uppdaterats
+                    fetchCategoryImages();
+                }, 1000);
+            }
+            // Annars anropas funktionen för att skapa en ny bild
+            else {
+                const result = await createNewImage();
+                if (result.error) {
+                    displayErrorMsg([result.error], errorMsgList);
+                    return;
+                }
+                displaySuccessMsg(["Bilden läggs till!"], successMsgList);
+                loadingSpinner.classList.remove("hidden");
+                setTimeout(() => {
+                    loadingSpinner.classList.add("hidden"); // Döljer ikonen
+                    resetImageForm(); // Resettar formuläret när bilden uppdaterats
+                    fetchCategoryImages();
+                }, 1000);
+            }
         });
     }
 }
@@ -522,11 +537,6 @@ async function fetchDinnerDishes() {
     loadingText.textContent = "Hämtar maträtter från databasen, vänta på att servern ska vakna..."
     try {
         const response = await fetch(`${url}/dinner`);
-        /*, {
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-               });*/
 
         if (!response.ok) {
             throw Error(`Fel hos server, kunde inte hämta maträtter : ${response.status}`)
@@ -691,7 +701,7 @@ async function deleteDinnerDish(id) {
             throw new Error(`Det gick inte att radera maträtten från middagsmenyn`);
         }
         const data = await response.json();
-        console.log("Raderad maträtt:", data); // Om man lyckats radera en maträtt
+
     } catch (error) {
         console.error("Det gick inte att radera den specifika maträtten:", error);
         throw error;
@@ -734,6 +744,47 @@ async function updateDinnerDish(id) {
     }
 }
 
+// Uppdaterar en bilds information, alt-text/kategori
+async function updateCategoryImage(id) {
+    const token = fetchToken(); // Hämtar token
+    const formData = new FormData();
+
+    // Inputs för bilder
+    const imageCategoryInput = document.getElementById("image-category");
+    //const fileInput = document.getElementById("image-file");
+    const altInput = document.getElementById("image-name");
+    const fileInput = document.getElementById("image-file");
+
+    // Inputs inom formuläret 
+    const category = imageCategoryInput.value.trim();
+    const alt = altInput.value.trim();
+    const file = fileInput.files[0];
+
+    formData.append("category", category);
+    formData.append("alt", alt);
+
+    // Skickar med bildfilen om man valt att uppdatera med en ny bild
+    if (fileInput.files.length > 0) {
+        formData.append("image", file);
+    }
+
+    try {
+        const response = await fetch(`${url}/dinner/category-images/${id}`, {
+            method: "PUT",
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Det gick inte att uppdatera den specifika bilden:", error);
+        throw error;
+    }
+}
+
 // Tar bort en kategoribild
 async function deleteCategoryImage(id) {
     const token = fetchToken(); // Kollar om token finns för att använda i anropet
@@ -749,7 +800,6 @@ async function deleteCategoryImage(id) {
             throw new Error(`Det gick inte att radera bilden...`);
         }
         const data = await response.json();
-        console.log("Raderad bild:", data); // Om man lyckats radera en bild
         return true;
     } catch (error) {
         console.error("Det gick inte att radera den specifika bilden:", error);
@@ -846,6 +896,7 @@ async function createNewImage() {
             // Resettar formuläret när bilden blivit tillagd
             resetImageForm();
         }, 1000);
+        return data;
     } catch (error) {
         console.error("Kunde inte lägga till bilden: ", error);
         showError(["Oväntat fel. Försök igen om en stund!"], errorMsgList); // Visar felmeddelande i DOM
@@ -1103,11 +1154,12 @@ function listenImageBtns() {
             newImageForm.querySelector(".success-message ul").innerHTML = "";
             newImageForm.querySelector(".error-message ul").innerHTML = "";
 
-            document.getElementById("image-form-title").textContent = "Uppdatera bild";
-            document.getElementById("add-image-btn").textContent = "Uppdatera bild";
+            document.getElementById("image-form-title").textContent = "Uppdatera bildens info";
+            document.getElementById("add-image-btn").textContent = "Uppdatera bildens info";
 
             const imageInfo = await fetchImageById(updateBtnId);
             fillUpdatedImageForm(imageInfo);
+            newImageForm.scrollIntoView({ behavior: "smooth" });
         }
     });
 }
@@ -1135,6 +1187,16 @@ function fillUpdatedImageForm(imageInfo) {
     // Formuläret för en bild blir ifylld med data från backend
     categoryInput.value = imageInfo.category;
     altInput.value = imageInfo.alt;
+
+    // Inaktiverar inputen om användaren ska uppdatera en bilds information
+    const imageFileInput = document.getElementById("image-file");
+    imageFileInput.disabled = true;
+
+    const imageFileLabel = document.querySelector("label[for='image-file']");
+    imageFileLabel.textContent = "Bilden kan inte ändras vid uppdatering";
+    imageFileLabel.style.color = "red";
+    imageFileLabel.style.fontWeight = "bold";
+    imageFileLabel.style.fontSize = "0.9em";
 }
 
 // Resettar formuläret för en middagsmaträtt
@@ -1171,7 +1233,17 @@ function resetImageForm() {
     // Texter
     document.getElementById("image-form-title").textContent = "Lägg till bild"
     document.getElementById("add-image-btn").textContent = "Lägg till bild"
-        // Localstorage key
+
+    const imageFileInput = document.getElementById("image-file");
+    imageFileInput.disabled = false;
+
+    const imageFileLabel = document.querySelector("label[for='image-file']");
+    imageFileLabel.textContent = "Välj bild";
+    imageFileLabel.style.color = "black";
+    imageFileLabel.style.fontWeight = "normal";
+    imageFileLabel.style.fontSize = "1em";
+
+    // Localstorage key
     localStorage.removeItem("image-id");
 }
 
