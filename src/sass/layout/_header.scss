@@ -16,7 +16,7 @@ header {
     }
     ul {
         display: flex;
-        gap: 1rem;
+        gap: 3rem;
         list-style: none;
         margin-left: auto;
     }
@@ -37,16 +37,6 @@ header a {
     padding: 0.5rem;
     position: relative;
     transition: color 0.25s ease;
-    &::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -4px;
-        width: 0%;
-        height: 2px;
-        background-color: $link-color;
-        transition: width 0.3s ease;
-    }
     &:hover {
         color: $link-color;
         &::after {
@@ -56,6 +46,13 @@ header a {
     &:active {
         color: #fa8e00ab;
     }
+}
+
+.home-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1em;
 }
 
 .logo {
@@ -88,7 +85,7 @@ header a {
 
 @media screen and (max-width: 310px) {
     header {
-        padding: 0rem;
+        padding: 0.2rem;
         ul {
             gap: 0.1em;
         }

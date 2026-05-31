@@ -87,7 +87,7 @@
     width: 100%;
     margin-top: 1em;
     h3 {
-        font-size: 1.3em;
+        font-size: 1.4em;
         text-decoration: underline;
     }
     .category-column {
@@ -95,6 +95,12 @@
         flex-direction: column;
         gap: 0em;
         overflow-wrap: break-word;
+    }
+}
+
+#starters-list {
+    .dinner-article {
+        background-color: #9aecc3;
     }
 }
 

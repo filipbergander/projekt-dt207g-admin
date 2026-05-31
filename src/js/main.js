@@ -358,6 +358,11 @@ async function loginUser() {
 
         const data = await response.json(); // Väntar på responsen tillbaka
 
+        if (response.status === 502 || response.status === 503) {
+            displayErrorMsg(["Servern startar upp...", "Prova igen strax."], errorMsgList);
+            return;
+        }
+
         // Om token inte finns inom responsen så går inte inloggningen igenom
         if (!response.ok) {
             loadingSpinner.classList.add("hidden"); // Döljer ikonen vid misslyckad respons
@@ -392,13 +397,12 @@ async function loginUser() {
         }, 1200);
     } catch (error) {
         console.error("Kunde inte logga in användaren: ", error);
-
+        if (error.message === "timeout") {
+            displayErrorMsg(["Servern startar upp...", "Prova igen strax."], errorMsgList);
+            return;
+        }
         // Felmeddelanden i DOM
-        errors.push("Kunde inte logga in...");
-        errors.push("Fel email eller lösenord!");
-
-        displayErrorMsg(errors, errorMsgList); // Visar felmeddelanden
-        return; // Kör inte vidare med inloggningen
+        displayErrorMsg(["Kunde inte logga in...", "Servern är nedstängd..."], errorMsgList); // Visar felmeddelanden
     }
 }
 
@@ -806,7 +810,7 @@ async function deleteCategoryImage(id) {
         throw error;
     }
 }
-
+// Hämtar in bilder för varje kategori av mat/dryck från backend 
 async function fetchCategoryImages() {
     const imageSection = document.getElementById("image-container");
     if (!imageSection) return; // Om ingen container för bilderna finns, -> return

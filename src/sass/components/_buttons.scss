@@ -9,7 +9,7 @@
 
 #logout-button {
     font-weight: bold;
-    color: white;
+    color: #e4e4e7;
     cursor: pointer;
     border: none;
     background: none;
@@ -17,7 +17,6 @@
     font-size: 1.3em;
     &:hover {
         color: $link-color;
-        transform: scale(1.1);
     }
 }
 
@@ -83,19 +82,11 @@
 @media screen and (max-width: 768px) {
     #logout-button {
         font-size: 1.1em;
-        &:hover {
-            color: $link-color;
-            transform: scale(1.1);
-        }
     }
 }
 
 @media screen and (max-width: 380px) {
     #logout-button {
         font-size: 1em;
-        &:hover {
-            color: $link-color;
-            transform: scale(1.1);
-        }
     }
 }
