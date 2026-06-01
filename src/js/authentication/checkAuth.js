@@ -1,7 +1,10 @@
 "use strict";
 checkAuthAccess();
 
-// Ser över om användaren har behörighet till admin-sidan
+/**
+ * Autentiserar användare och kollar om den har behöriget för resten av webbplatsen
+ * @returns {void} - Returnerar ingenting
+ */
 export function checkAuthAccess() {
 
     // Sökvägen för användarens webbfönster just nu
@@ -12,6 +15,7 @@ export function checkAuthAccess() {
         "/index.html",
         "/register.html",
         "/dinner.html",
+        "/booking.html",
         "/"
     ]
 
@@ -28,7 +32,9 @@ export function checkAuthAccess() {
         changeFooterText();
     }
 }
-// Ändrar footerns utseende och tar bort länk till registrera-sidan
+/**
+ * Ändrar footerns utseende och tar bort länk till registrera-sidan om man inte är inloggad som admin
+ */
 export function changeFooterText() {
     const footer = document.getElementById("footer");
     footer.innerHTML = "";
