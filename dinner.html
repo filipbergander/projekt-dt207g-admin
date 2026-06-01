@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trattoria | Lägg till maträtt</title>
+    <title>Trattoria Lema | Lägg till maträtt</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 </head>
 
@@ -19,8 +19,16 @@
             </ul>
         </nav>
     </header>
+    <div class="sub-header">
+        <nav aria-label="Navigering för brödsmulor">
+            <ol class="breadcrumbs">
+                <li><a href="index.html" class="breadcrumb-item">Start </a>></li>
+                <li aria-current="page" class="breadcrumb-item">Kvällsmeny</li>
+            </ol>
+        </nav>
+    </div>
     <main class="dish-main">
-        <h1>Middag</h1>
+        <h1>Kvällsmeny</h1>
         <div class="dinner-btns-container">
             <button id="new-dish-btn" class="cta-btn">
                 <span class="material-symbols-outlined">add</span>
@@ -32,7 +40,7 @@
             </button>
             <button id="image-btn" class="cta-btn">
                 <span class="material-symbols-outlined">photo_library</span>
-                Kategori-bilder
+                Bilder
             </button>
         </div>
         <section id="new-dish-container" class="dish-container hidden">
@@ -137,7 +145,7 @@
             </form>
         </section>
         <section id="image-container" class="image-container hidden">
-            <h2>Kategori-bilder</h2>
+            <h2>Bilder</h2>
             <p class="info-text">Här kan du se och hantera bilder för kategorier. Du kan ta bort dem eller uppdatera bildens alt-text och kategori.</p>
             <p id="loading-images-text"></p>
             <div class="images-list">

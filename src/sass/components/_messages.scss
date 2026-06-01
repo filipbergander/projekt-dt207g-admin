@@ -59,6 +59,44 @@
     color: #b80275;
 }
 
+// Brödsmulor för navigering
+.breadcrumbs {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 5rem;
+    margin-top: 1em;
+}
+
+.breadcrumbs li {
+    list-style: none;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+    color: #0018f1;
+}
+
+.breadcrumbs [aria-current="page"] {
+    font-weight: bold;
+}
+
+.breadcrumbs a:hover,
+.breadcrumbs a:focus {
+    color: #ff0000;
+    text-decoration: underline;
+}
+
+.breadcrumbs a:active {
+    color: #000000;
+}
+
+@media screen and (max-width: 768px) {
+    .breadcrumbs {
+        margin-left: 0.5rem;
+        font-size: 0.9em;
+    }
+}
+
 @media screen and (max-width: 475px) {
     .info-text {
         font-size: 1em;

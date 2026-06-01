@@ -101,3 +101,18 @@
         font-size: 0.9em;
     }
 }
+
+@mixin bookingBtn($btn-delete, $color-text) {
+    color: $color-text;
+    background-color: $btn-delete;
+    color: #fff;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    &:hover {
+        background-color: rgb(255, 0, 0);
+    }
+}

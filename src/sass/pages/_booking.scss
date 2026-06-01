@@ -1,0 +1,132 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+.booking-information {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 0.2em;
+    border-left: 4px solid rgb(228, 158, 8);
+    padding-left: 1em;
+    p {
+        margin: 0;
+        font-size: 1em;
+        color: #272727;
+    }
+}
+
+.booking-instruction {
+    margin: 0.5em auto;
+    max-width: 60ch;
+    text-align: left;
+    font-size: 1em;
+    line-height: 1.3;
+}
+
+.booking-article {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    margin: 1.5em auto;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(29, 19, 19, 0.25);
+    background-color: rgb(226, 226, 226);
+    border: 0.5px solid rgba(0, 0, 0, 0.253);
+    transition: 0.3s ease;
+    &:hover {
+        border: 1px solid rgb(0, 0, 0);
+        box-shadow: 0 4px 16px rgba(29, 19, 19, 0.35);
+    }
+}
+
+.booking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.5em;
+    border-radius: 8px;
+    background-color: #fbf9f3d7;
+    padding: 0.5em 1em;
+    .guest-span {
+        font-size: 1.1em;
+        padding: 0.4em 0.5em;
+        background-color: rgb(255, 231, 12);
+        border-radius: 12px;
+    }
+    h3 {
+        font-size: 1.2em;
+    }
+}
+
+.booking-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1em;
+    border-radius: 8px;
+    .message-span {
+        font-weight: bold;
+        text-align: left;
+        display: block;
+        color: rgb(0, 0, 0);
+        margin-bottom: 0.5em;
+    }
+    p {
+        margin: 0;
+        text-align: left;
+        color: #272727;
+        padding: 1em 0.5em;
+        border-radius: 8px;
+        background-color: #ffffff;
+        max-width: 60ch;
+        word-break: break-word;
+    }
+}
+
+.booking-btn-div {
+    display: flex;
+    //justify-content: space-around;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5em;
+    .delete-booking-btn {
+        @include bookingBtn($btn-delete, #fff);
+        margin-left: auto;
+    }
+}
+
+.booking-status {
+    color: #000;
+    background-color: rgb(255, 255, 255);
+    font-weight: bold;
+    padding: 0.5em;
+    border-radius: 12px;
+    border: none;
+    .approved {
+        background-color: rgb(1, 139, 8);
+        color: #fff;
+    }
+}
+
+.booking-article.approved {
+    background-color: rgb(183, 247, 146);
+}
+
+.booking-article.pending {
+    background-color: rgb(226, 226, 226);
+    color: #000;
+}
+
+.booking-article.declined {
+    background-color: rgb(247, 132, 132);
+}
+
+.time-span,
+.date-span,
+.phone-span,
+.email-span,
+.message-span {
+    font-weight: bold;
+}

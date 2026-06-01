@@ -16,7 +16,7 @@ header {
     }
     ul {
         display: flex;
-        gap: 3rem;
+        gap: 2rem;
         list-style: none;
         margin-left: auto;
     }
@@ -71,7 +71,7 @@ header a {
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 425px) {
     header {
         padding: 0.5rem;
         ul {

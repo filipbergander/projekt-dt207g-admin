@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     listenImageBtns(); // Lyssnar på knappar för specifika bilder delete/uppdatera
     changeDinnerForm(); // Växlar mellan att visa maträtter eller formuläret
     displayUserUi(); // Visar inloggade användare sina användarnamn på startsidan
-    fetchCategoryImages(); // Hämtar in bilder som lagts till för varje kategori av maträtt¨
+    fetchCategoryImages(); // Hämtar in bilder som lagts till för varje kategori av maträtt
+    fetchBookings(); // Hämtar in bokningar som gjorts på trattorian och lagts till i backend
 
     // Om man är på den sidan med knappen
     if (formResetBtn) {
@@ -409,18 +410,19 @@ async function loginUser() {
 // För att skapa en ny användare
 async function createUser() {
 
+    // Inputs inom formuläret 
     const emailInput = document.getElementById("register-email");
     const passwordInput = document.getElementById("register-password");
     const usernameInput = document.getElementById("register-username");
     const roleInput = document.getElementById("register-role");
 
-    // Inputs inom formuläret 
+    // Värdena inom inputs
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
     const username = usernameInput.value.trim();
     const role = roleInput.value.trim();
 
-    const registerForm = document.getElementById("register-form");
+    const registerForm = document.getElementById("register-form"); // Formulär
     const errorMsgList = registerForm.querySelector(".error-message ul"); // Felmeddelanden
     const successMsgList = registerForm.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
     const loadingSpinner = registerForm.querySelector(".loading-spinner"); // "Registrerings-spinner" ikon
@@ -949,6 +951,230 @@ async function renderCategoryImages(container, categoryImages) {
     });
 
 }
+
+async function fetchBookings() {
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
+
+    const bookingContainer = document.getElementById("booking-container");
+
+    // Om man inte är på boknings-sidan -> return
+    if (!bookingContainer) return;
+
+    const bookingLoadingText = bookingContainer.querySelector(".booking-message");
+    bookingLoadingText.textContent = "Hämtar bokningar från databasen, vänta på att servern ska vakna...";
+
+    try {
+        const response = await fetch(`${url}/dinner/bookings`, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Kunde inte hämta bokningar...");
+        }
+        // Datan med bokningar från server
+        const bookingsData = await response.json();
+        bookingLoadingText.textContent = ""; // Tömmer
+        console.log("Bokningar: ", bookingsData);
+
+        if (bookingsData.length === 0) {
+            bookingLoadingText.textContent = "Inga bokningar tillagda än...";
+            return;
+        }
+
+        // Renderar bokningar i DOM
+        renderBookings(bookingsData);
+
+    } catch (error) {
+        console.error("Kunde inte hämta bokningarna: ", error);
+        bookingLoadingText.textContent = "Kunde inte hämta bokningarna från servern, prova logga in igen..."
+    }
+}
+
+/**
+ * Renderar bokningar som gjorts i DOM
+ * @param {*} bookings - Bokningar som gjorts och hämtats in från backend
+ * @returns {void} - Returnerar ingenting
+ */
+async function renderBookings(bookings) {
+    const bookingList = document.getElementById("booking-container");
+    if (!bookingList) return; // Om ingen container för bokningar finns, -> return
+
+    bookingList.innerHTML = ""; // Tömmer innan nya bokningar skapas
+
+    // Skapar rubrik
+    const headline = document.createElement("h2");
+    headline.textContent = "Alla bokningar som blivit gjorda";
+    bookingList.prepend(headline);
+    // Skapar en beskrivning/instruktion av bokningarna
+    const pEl = document.createElement("p");
+    pEl.classList.add("booking-instruction");
+    pEl.textContent = "Du kan godkänna, neka eller radera bokningar. Bokningarna visas i datumordning där den tidigaste bokningen ligger överst.";
+    bookingList.appendChild(pEl);
+
+    // Skriver ut bokningarna i DOM
+    bookings.forEach(booking => {
+
+        // Hämtar redan skapta bokningar från localstorage
+        const savedBookingStatus = localStorage.getItem(`bokning-${booking._id}` || "pending"); // Defaultvärde är "pending" om ingen status finns i localstorage
+
+        const article = document.createElement("article"); // Lägger bokningarna i separata divs
+        article.classList.add("booking-article");
+
+        const div = document.createElement("div");
+        div.classList.add("booking-header");
+
+        // Den som gjort bokningen
+        const bookingHeadline = document.createElement("h3");
+        bookingHeadline.textContent = `${booking.name}`;
+
+        // Antal gäster
+        const spanGuest = document.createElement("span");
+        spanGuest.classList.add("guest-span");
+        spanGuest.textContent = `${booking.guests} Gäster`;
+
+        div.appendChild(bookingHeadline);
+        div.appendChild(spanGuest);
+
+        // Skapar div för information -> datum, tid, telefonnummer och mejl
+        const divEl = document.createElement("div");
+        divEl.classList.add("booking-information");
+
+        // För att skriva ut datumet för bokningen
+        const pDate = document.createElement("p");
+        const spanDate = document.createElement("span");
+        spanDate.classList.add("date-span");
+        spanDate.textContent = "Datum: ";
+
+        // Lägger till span till texten samt formaterar datumet snyggt
+        pDate.appendChild(spanDate);
+        pDate.append(`${new Date(booking.date).toLocaleDateString("sv-SE")}`)
+
+        // För att skriva ut tiden för bokningen 
+        const pTime = document.createElement("p");
+        const spanTime = document.createElement("span");
+        spanTime.classList.add("time-span");
+        spanTime.textContent = "Tid: ";
+
+        pTime.appendChild(spanTime);
+        pTime.append(booking.time);
+
+        // För att skriva ut telefonnumret 
+        const pPhone = document.createElement("p");
+        const spanPhone = document.createElement("span");
+        spanPhone.classList.add("phone-span");
+        spanPhone.textContent = "Telefon: ";
+        pPhone.appendChild(spanPhone);
+        pPhone.append(booking.phone);
+
+        // För att skriva ut emailen 
+        const pEmail = document.createElement("p");
+        const spanEmail = document.createElement("span");
+        spanEmail.classList.add("email-span");
+        spanEmail.textContent = "Mejl: ";
+        pEmail.appendChild(spanEmail);
+        pEmail.append(booking.email);
+
+        // Skapar div för select, knapp och label
+        const buttonDiv = document.createElement("div");
+        buttonDiv.classList.add("booking-btn-div");
+        const deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("delete-booking-btn");
+        deleteBtn.textContent = "Radera";
+        deleteBtn.dataset.id = booking._id;
+
+        // Skapar selectbox
+        const select = document.createElement("select");
+        select.classList.add("booking-status");
+        select.dataset.id = booking._id;
+        select.name = "booking-status";
+        select.id = `${booking._id}`;
+        select.setAttribute("aria-label", "Välj status för bokningen");
+
+        // alla optionvärden inom selectboxen
+        const options = [
+            { value: "pending", text: "Ej hanterad" },
+            { value: "approved", text: "Godkänd" },
+            { value: "declined", text: "Nekad" }
+        ]
+
+        // Optionelementet får sina values 
+        options.forEach(option => {
+            const optionEl = document.createElement("option");
+            optionEl.value = option.value;
+            optionEl.textContent = option.text;
+            optionEl.setAttribute("aria-label", option.text);
+
+            // Sätter värdet på optionelementet beroende på bokningens status i localstorage
+            if (option.value === savedBookingStatus) {
+                optionEl.selected = true;
+            }
+            select.appendChild(optionEl);
+        });
+
+        // Uppdaterar klassen på varje bokningsartikel
+        updateBookingClass(article, select, savedBookingStatus);
+
+        // Skapar label för selectboxen
+        const label = document.createElement("label");
+        label.setAttribute("for", select.id);
+        label.textContent = "Status:";
+        label.classList.add("status-label");
+
+        // Lägger till info för varje bokning
+        divEl.append(pDate, pTime, pPhone, pEmail);
+
+        article.appendChild(div);
+        article.appendChild(divEl);
+
+        // Om det finns ett meddelande inom bokningen, skapa element för att skriva ut det i DOM
+        if (booking.message) {
+            // Skapar elementen
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("booking-message");
+            const pMessage = document.createElement("p");
+            const spanMessage = document.createElement("span");
+            spanMessage.classList.add("message-span");
+            spanMessage.textContent = "Meddelande";
+
+            // Lägger till elementen
+            messageDiv.appendChild(spanMessage);
+            pMessage.append(booking.message);
+            messageDiv.appendChild(pMessage);
+            article.append(messageDiv);
+        }
+        // Lägger till selectbox, knapp och label till diven
+        buttonDiv.append(label, select, deleteBtn);
+
+        // Lägger till element till boknings-artikeln och hela bokningslistan
+        article.appendChild(buttonDiv);
+        bookingList.appendChild(article);
+
+        // Ändrar i localstorage på en bokning genom selectboxen samt boknings-artikelns klass
+        select.addEventListener("change", () => {
+            // Antingen pending, approved eller declined
+            const bookingStatus = select.value;
+            localStorage.setItem(`bokning-${booking._id}`, bookingStatus);
+            updateBookingClass(article, select, bookingStatus);
+        });
+    });
+}
+
+/**
+ * Uppdaterar klass på bokningsartiklarna beroende på status i selectboxen
+ * @param {*} article - Artikel-elementet för varje bokning
+ * @param {*} select - Selectboxen för varje artikel-element
+ * @param {*} bookingStatus - Statusen som väljs som option i selectboxen, godkänd, nekad eller ej hanterad -> approved, declined, pending
+ */
+function updateBookingClass(article, select, bookingStatus) {
+    article.classList.remove("pending", "approved", "declined");
+    select.classList.remove("pending", "approved", "declined");
+
+    article.classList.add(bookingStatus);
+    select.classList.add(bookingStatus);
+}
+
 // Funktion som skriver ut felmeddelanden i DOM
 function displayErrorMsg(errors, UlElement) {
     /*const errorMsgList = document.querySelector(".error-message ul");
@@ -1247,11 +1473,14 @@ function resetImageForm() {
     imageFileLabel.style.fontWeight = "normal";
     imageFileLabel.style.fontSize = "1em";
 
-    // Localstorage key
+    // Tar bort localstorage-nyckel
     localStorage.removeItem("image-id");
 }
 
-// Hämtar in token från localstorage
+/**
+ * Hämtar in JWT-token från localStorage för att autentisera i anrop mot backend
+ * @returns {string} Returnerar token från localStorage
+ */
 function fetchToken() {
     return localStorage.getItem("login-key");
 }
