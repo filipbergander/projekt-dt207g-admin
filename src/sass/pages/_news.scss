@@ -1,9 +1,19 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 @use "./login" as *;
+.news-main {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 #add-news-form {
     position: relative;
     @extend #login-form;
+    width: 60%;
     background-color: rgb(126, 215, 238);
     input {
         padding: 0.5em;
@@ -14,6 +24,8 @@
         display: block;
         overflow: hidden;
         resize: vertical;
+        max-height: 300px;
+        padding: 0.5em;
     }
     .error-message {
         color: rgb(173, 2, 2);
@@ -23,7 +35,7 @@
 #news-container {
     margin: 2em 0em 2em;
     max-width: 700px;
-    width: 100%;
+    width: 60%;
     border-radius: 16px;
     padding: 2em;
     background-color: rgb(219, 219, 219);
@@ -51,8 +63,9 @@
     font-family: Georgia, 'Times New Roman', Times, serif;
     .article-title {
         text-align: center;
-        margin-bottom: 0.5em;
+        margin-bottom: 0.3em;
         font-size: 1.4em;
+        line-height: 1.2;
     }
     .article-content {
         margin-top: 0.5em;
@@ -104,12 +117,40 @@
     }
 }
 
-@media screen and (max-width: 768px) {
-    #news-container {
-        padding: 0.2em;
+@media screen and (max-width: 900px) {
+    #add-news-form {
+        width: 80%;
     }
+    #news-container {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 680px) {
     .news-article {
         width: 100%;
+    }
+    #add-news-form {
+        width: 100%;
+        border-radius: 0px;
+        input {
+            padding: 0.5em;
+            border-radius: 4px;
+            border: 0.5px solid rgb(5, 116, 29);
+        }
+        #news-content {
+            display: block;
+            overflow: hidden;
+            resize: vertical;
+            max-height: 300px;
+            padding: 0.5em;
+        }
+    }
+    #news-container {
+        margin: 2em 0em 2em;
+        width: 100%;
+        border-radius: 0px;
+        padding: 0.5em;
     }
 }
 
