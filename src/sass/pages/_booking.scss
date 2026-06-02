@@ -1,5 +1,18 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
+.booking-section {
+    background-color: rgb(255, 250, 243);
+    padding: 2em 4em;
+    margin: 2em auto;
+    border-radius: 12px;
+}
+
+.booking-container {
+    display: grid;
+    gap: 2em;
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .booking-information {
     display: flex;
     flex-direction: column;
@@ -11,12 +24,14 @@
         margin: 0;
         font-size: 1em;
         color: #272727;
+        word-break: break-word;
     }
 }
 
 .booking-instruction {
     margin: 0.5em auto;
     max-width: 60ch;
+    padding: 0em 1em;
     text-align: left;
     font-size: 1em;
     line-height: 1.3;
@@ -29,7 +44,7 @@
     padding: 1em;
     margin: 1.5em auto;
     border-radius: 12px;
-    max-width: 600px;
+    max-width: 350px;
     width: 100%;
     box-shadow: 0 4px 12px rgba(29, 19, 19, 0.25);
     background-color: rgb(226, 226, 226);
@@ -57,6 +72,7 @@
     }
     h3 {
         font-size: 1.2em;
+        word-break: break-word;
     }
 }
 
@@ -87,13 +103,27 @@
 
 .booking-btn-div {
     display: flex;
-    //justify-content: space-around;
     align-items: center;
     justify-content: flex-start;
     gap: 0.5em;
     .delete-booking-btn {
         @include bookingBtn($btn-delete, #fff);
         margin-left: auto;
+        width: 30%;
+        max-width: 120px;
+    }
+    select {
+        width: 40%;
+        max-width: 125px;
+        cursor: pointer;
+    }
+}
+
+.delete-booking-btn.disabled {
+    background-color: rgba(0, 0, 0, 0.480);
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.480);
+        cursor: not-allowed;
     }
 }
 
@@ -132,4 +162,42 @@
 .email-span,
 .message-span {
     font-weight: bold;
+}
+
+@media screen and (max-width: 900px) {
+    .booking-section {
+        padding: 2em 1em;
+    }
+    .booking-container {
+        grid-template-columns: 1fr;
+    }
+    .booking-article {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .booking-section {
+        padding: 0.5em;
+    }
+}
+
+@media screen and (max-width: 340px) {
+    .booking-btn-div {
+        .delete-booking-btn {
+            width: 30%;
+            max-width: 120px;
+            font-size: 0.9em;
+        }
+        select {
+            width: 40%;
+            max-width: 125px;
+            font-size: 0.9em;
+            padding: 0.4em 0.2em;
+            margin-left: 0em;
+        }
+    }
+    .booking-btn-div {
+        gap: 0.1em;
+    }
 }

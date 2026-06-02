@@ -43,8 +43,8 @@
     @include admin-btn($btn-color-dinner, $color-text-light);
 }
 
-.cta-btn-review {
-    @include admin-btn($btn-color-review, $color-text-light);
+.cta-btn-news {
+    @include admin-btn(rgb(2, 98, 122), $color-text-light);
 }
 
 #new-dish-btn {
@@ -81,6 +81,13 @@
 
 .update-image-btn {
     @include dishBtn($btn-color-primary, $color-text-light);
+}
+
+#add-news-btn {
+    @include button($btn-color-news, $color-text);
+    &:hover {
+        background-color: rgba(255, 238, 0, 0.534);
+    }
 }
 
 @media screen and (max-width: 768px) {

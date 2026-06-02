@@ -50,7 +50,7 @@
 
 #add-image-form {
     @extend #new-dish-form;
-    background-color: #f0aae1;
+    background-color: #f0aae1be;
     input[type="file"] {
         background-color: #ffffff;
         padding: 0.5em;
@@ -60,7 +60,7 @@
 
 #add-new-image-container {
     @extend #new-dish-container;
-    background-color: #6e6a6d;
+    background-color: rgba(240, 186, 36, 0);
 }
 
 .image-row-btns {

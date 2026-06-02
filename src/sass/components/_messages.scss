@@ -2,8 +2,9 @@
 .error-message {
     color: rgb(207, 2, 2);
     font-weight: bold;
+    max-width: 40ch;
+    padding-left: 1em;
     li {
-        list-style-position: inside;
         text-align: left;
     }
 }
@@ -57,6 +58,10 @@
     animation: pulseText 1.5s infinite;
     margin: 1em 0 1em;
     color: #b80275;
+}
+
+.booking-loading-msg {
+    animation: pulseText 1.5s infinite;
 }
 
 // Brödsmulor för navigering

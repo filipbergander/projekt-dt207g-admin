@@ -1,0 +1,23 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "./login" as *;
+#add-news-form {
+    @extend #login-form;
+    background-color: rgb(96, 203, 230);
+    input {
+        padding: 0.5em;
+        border-radius: 4px;
+        border: 0.5px solid rgb(5, 116, 29);
+    }
+    #news-content {
+        display: block;
+        overflow: hidden;
+        resize: vertical;
+    }
+}
+
+@media screen and (max-width: 900px) {}
+
+@media screen and (max-width: 425px) {}
+
+@media screen and (max-width: 340px) {}

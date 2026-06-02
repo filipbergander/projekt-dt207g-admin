@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trattoria Lema | Nyhetsinlägg</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">Trattoria
+            Lema</a>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="index.html" class="home-link"><span class="material-symbols-outlined">home</span>Start</a>
+                </li>
+                <li><button id="logout-button">Logga ut</button></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="sub-header">
+        <nav aria-label="Navigering för brödsmulor">
+            <ol class="breadcrumbs">
+                <li><a href="index.html" class="breadcrumb-item">Start </a>></li>
+                <li aria-current="page" class="breadcrumb-item">Nyhetsinlägg</li>
+            </ol>
+        </nav>
+    </div>
+    <main class="booking-main">
+        <h1>Nyhetsinlägg</h1>
+        <form id="add-news-form" method="post">
+            <h2 id="news-form-title">Skriv inlägg</h2>
+            <div class="error-message">
+                <ul></ul>
+            </div>
+            <div class="success-message">
+                <ul></ul><span class="loading-spinner hidden"></span>
+            </div>
+            <div class="input-area">
+                <label for="news-headline">Rubrik</label>
+                <input type="text" id="news-headline" name="headline" placeholder="Skriv rubrik">
+            </div>
+
+            <div class="input-area">
+                <label for="news-content">Innehåll</label>
+                <textarea id="news-content" name="content" rows="4" cols="50" placeholder="Skriv innehåll"></textarea>
+            </div>
+
+            <div class="input-area">
+                <label for="news-author">Skribent</label>
+                <input type="text" id="news-author" name="author" placeholder="Skriv skribent">
+            </div>
+            <button id="add-news-btn" type="submit">Publicera</button>
+        </form>
+        <article>
+            <!-- Skriva ut nyhetsinlägg här -->
+        </article>
+    </main>
+    <footer id="footer">
+        <p> Admin-sida för Trattoria Lema</p>
+        <a href="register.html">Registrera användare</a>
+    </footer>
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>
