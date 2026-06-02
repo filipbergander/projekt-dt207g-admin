@@ -9,9 +9,11 @@ const url = "http://localhost:3000";
 //const url = "https://fb-backend-api-p9fp.onrender.com";
 
 let rotateDishIcon = 0; // Variabel för att rotera ikon till att resetta matformuläret
-let rotateImageIcon = 0; // Variabel för att rotera ikon till att resetta bildformuläret
+let rotateImageIcon = 0; // Resetta bildformuläret
+let rotateNewsIcon = 0; // Resetta formuläret för nyhetsinlägg
 const formResetBtn = document.getElementById("reset-form-btn"); // Knapp för att resetta formulär till maträtt
-const imageFormResetBtn = document.getElementById("reset-image-form-btn"); // Knapp för att resetta formulär till bild
+const imageFormResetBtn = document.getElementById("reset-image-form-btn"); // Rresetta formulär till bild
+const newsFormResetBtn = document.getElementById("reset-news-form-btn"); // Resetta formulär till nyhetsinlägg
 
 document.addEventListener("DOMContentLoaded", () => {
     checkAuthAccess(); // Middleware för att se över om användaren är behörig
@@ -23,8 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutUser(); //För att logga ut en användare
     listenDinnerBtns(); // Lyssnar på knappar för specifika maträtter delete/uppdatera
     listenImageBtns(); // Lyssnar på knappar för specifika bilder delete/uppdatera
+    listenNewsBtns(); // Lyssnar på knappar för specifika nyhetsinlägg delete/uppdatera
     changeDinnerForm(); // Växlar mellan att visa maträtter eller formuläret
     displayUserUi(); // Visar inloggade användare sina användarnamn på startsidan
+    fetchNews(); // Hämtar in nyhetsinlägg som lagts till i backend
     fetchCategoryImages(); // Hämtar in bilder som lagts till för varje kategori av maträtt
     fetchBookings(); // Hämtar in bokningar som gjorts på trattorian och lagts till i backend
     listenBookingDeleteBtn(); // Lyssnar på knappen för att radera en bokning från backend och DOM
@@ -45,7 +49,16 @@ document.addEventListener("DOMContentLoaded", () => {
             resetImageForm(); // Resettar formuläret
         });
     }
+
+    if (newsFormResetBtn) {
+        newsFormResetBtn.addEventListener("click", () => {
+            rotateNewsIcon += -360;
+            newsFormResetBtn.style.transform = `rotate(${rotateNewsIcon}deg)`;
+            resetNewsForm();
+        });
+    }
 });
+
 
 /**
  * Formuläret för att logga in en användare initieras, anropar sedan funktionen för att logga in en användare
@@ -350,6 +363,8 @@ function initNewsForm() {
     const newsForm = document.getElementById("add-news-form");
     const newsBtn = document.getElementById("add-news-btn");
 
+    if (!newsForm) return; // Om inget formulär för nyhetsinlägg finns, -> return
+
     const errorMsgList = newsForm.querySelector(".error-message ul"); // Felmeddelanden
     const successMsgList = newsForm.querySelector(".success-message ul"); // Meddelanden vid lyckat resultat
 
@@ -357,7 +372,7 @@ function initNewsForm() {
 
     // Eventlyssnare för inloggningsformuläret
     if (newsForm) {
-        newsForm.addEventListener("submit", (event) => {
+        newsForm.addEventListener("submit", async(event) => {
             event.preventDefault();
             let errors = [];
 
@@ -373,7 +388,11 @@ function initNewsForm() {
                 return;
             }
 
-            if (newsHeadline === "") errors.push("Du måste fylla i rubrik!");
+            if (newsHeadline === "") {
+                errors.push("Du måste fylla i rubrik!")
+            } else if (newsHeadline.length > 35) {
+                errors.push("Rubriken kan inte vara längre än 35 tecken...");
+            }
             if (newsContent === "") {
                 errors.push("Skriv innehåll för nyheten!")
             } else if (newsContent.length < 10) {
@@ -390,8 +409,7 @@ function initNewsForm() {
                 displayErrorMsg(errors, errorMsgList);
                 return; // Stoppar formuläret från att bli submittat
             } else {
-                createNews(); // Skapar ett nytt nyhetsinlägg
-                resetNewsForm(); // Resettar formuläret
+                await createNews(); // Skapar ett nytt nyhetsinlägg
             }
         });
     }
@@ -628,6 +646,10 @@ async function createNewDinnerDish() {
     }
 }
 
+/**
+ * Skapar nytt inlägg genom formulär och databas
+ * @returns {void} - Returnerar ingenting
+ */
 async function createNews() {
     // Nyhetsformuläret
     const newsForm = document.getElementById("add-news-form");
@@ -660,13 +682,21 @@ async function createNews() {
             body: JSON.stringify({ headline, content, author })
         });
         const data = await response.json();
-        // Vid misslyckat resultat
-        if (!response.ok) {
-            loadingSpinner.classList.add("hidden"); // Visasr ingen laddningsikon
-            showError([data.error], errorMsgList); // Visar felmeddelanden från backend
-            throw Error(`Kunde inte skapa ett nytt inlägg... ${data.error}`);
+
+        // Om man inte är behörig -> token har gått ut
+        if (response.status === 401 || response.status === 403) {
+            loadingSpinner.classList.add("hidden"); // Visar ingen laddningsikon
+            displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
             return;
         }
+
+        // Vid misslyckat resultat
+        if (!response.ok) {
+            loadingSpinner.classList.add("hidden"); // Visar ingen laddningsikon
+            showError([data.error || "Kunde inte skapa nyhetsinlägget"], errorMsgList); // Visar felmeddelanden från backend
+            return;
+        }
+
         // Vid lyckat resultat
         loadingSpinner.classList.remove("hidden"); // Tar bort hidden för att visa laddningsikonen
         errorMsgList.innerHTML = ""; // Raderar eventuella felmeddelanden från tidigare försök
@@ -674,9 +704,24 @@ async function createNews() {
         displaySuccessMsg(successMsg, successMsgList); // Visar meddelandet i DOM
         setTimeout(() => {
             loadingSpinner.classList.add("hidden"); // Döljer ikonen
-            successMsgList.innerHTML = ""; // Tar bort det lyckade meddelandet i DOM
+            resetNewsForm(); // Resettar formuläret
+            fetchNews(); // Hämtar inlägget
         }, 1000);
+
+
     } catch (error) {
+
+        // Felmeddelanden i DOM
+        if (error.message === "timeout") { // Om servern anropas men inte har "vaknat" än
+            displayErrorMsg(["Servern startar upp...", "Prova igen strax."], errorMsgList);
+            loadingSpinner.classList.add("hidden");
+            return;
+        } else if (error.message === "Failed to fetch") { // Om servern inte är igång eller anropas på fel url
+            displayErrorMsg(["Kunde inte ansluta till servern, kontrollera att backend är igång..."], errorMsgList);
+            loadingSpinner.classList.add("hidden");
+            return;
+        }
+        displayErrorMsg([error.message], errorMsgList);
         loadingSpinner.classList.add("hidden");
         console.error("Kunde inte skapa ett nytt inlägg: ", error);
     }
@@ -1178,8 +1223,16 @@ async function fetchBookings() {
             }
         });
 
+        if (response.status === 401 || response.status === 403) {
+            bookingLoadingText.textContent = "Ingen behörighet, prova logga in igen...";
+            bookingLoadingText.style.color = "#cf0202";
+            return;
+        }
+
         if (!response.ok) {
-            throw new Error("Kunde inte hämta bokningar...");
+            bookingLoadingText.textContent = `Fel hos servern ${response.status}`;
+            bookingLoadingText.style.color = "#cf0202";
+            return;
         }
         // Datan med bokningar från server
         const bookingsData = await response.json();
@@ -1195,8 +1248,18 @@ async function fetchBookings() {
         renderBookings(bookingsData);
 
     } catch (error) {
+        // Felmeddelanden som skiljer sig beroende på felkod
+        if (error.message === "timeout") {
+            bookingLoadingText.textContent = "Servern svarar inte, prova igen strax...";
+            bookingLoadingText.style.color = "#cf0202";
+            return;
+        } else if (error.message === "Failed to fetch") {
+            bookingLoadingText.textContent = "Kunde inte ansluta till servern, kontrollera att backend är igång...";
+            bookingLoadingText.style.color = "#cf0202";
+            return;
+        }
         console.error("Kunde inte hämta bokningarna: ", error);
-        bookingLoadingText.textContent = "Kunde inte hämta bokningarna från servern, prova logga in igen..."
+        bookingLoadingText.textContent = "Oväntat fel.. Kunde inte hämta bokningarna från servern."
         bookingLoadingText.style.color = "#cf0202";
     }
 }
@@ -1468,6 +1531,240 @@ async function listenBookingDeleteBtn() {
  */
 function deleteBookingFromLocalStorage(id) {
     localStorage.removeItem(`bokning-${id}`);
+}
+
+/**
+ * Hämtar in nyhetsinlägg från backend och renderar i DOM
+ */
+async function fetchNews() {
+    const newsContainer = document.getElementById("news-container");
+
+    if (!newsContainer) return; // Om ingen container för nyhetsinlägg finns, -> return
+
+    newsContainer.textContent = "Hämtar nyhetsartikel från servern...";
+    try {
+        const response = await fetch(`${url}/news`);
+        if (!response.ok) {
+            throw new Error(`Fel hos server, kunde inte hämta nyheter: ${response.status}`);
+        }
+        const newsArticles = await response.json();
+        newsContainer.textContent = ""; // Tömmer tidigare nyhetsartikel
+
+        if (newsArticles.length === 0) {
+            newsContainer.textContent = "Ingen nyhetsartikel tillagd än...";
+            newsContainer.style.textAlign = "center";
+            return;
+        }
+
+        renderNews(newsArticles); // Renderar nyhetsartikeln i DOM
+    } catch (error) {
+
+        // Felmeddelanden beroende på vilket fel som finns
+        if (error.message === "timeout") {
+            newsContainer.textContent = "Servern startar upp, prova igen strax...";
+            return;
+        } else if (error.message === "Failed to fetch") {
+            newsContainer.textContent = "Kunde inte ansluta till servern, kontrollera att backend är igång...";
+            return;
+        }
+        // Ifall inget tidigare felmeddelande snappas upp visas detta
+        newsContainer.textContent = "Oväntat fel.. Kunde inte hämta nyhetsartiklar från servern.";
+        console.error(error);
+    }
+}
+
+/**
+ * Skapar nyhetsartikel från inlägget som skapats och som lagras i databasen
+ * @param {*} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
+ * @returns {void} - Returnerar ingenting
+ */
+async function renderNews(newsArticle) {
+    // Renderar inte nyheterna förens besökaren är på den sidan
+    const newsContainer = document.getElementById("news-container");
+    if (!newsContainer) return;
+
+    // Tömmer listan av nyheter innan nya skapas
+    newsContainer.innerHTML = "";
+
+    // Skriver ut nyhetsartikeln i DOM enligt strukturen nedan
+    newsArticle.forEach(article => {
+        // Skapar en rubrik
+        const headline = document.createElement("h3");
+        headline.textContent = "Aktuellt inlägg";
+        headline.classList.add("news-headline");
+        newsContainer.appendChild(headline);
+
+        // Text för att beskriva inlägg
+        const instructionText = document.createElement("p");
+        instructionText.classList.add("news-instruction");
+        instructionText.textContent = "Läs det senaste inlägget som publicerats, max ett inlägg kan lagras. Uppdatera eller radera befintligt inlägg.";
+        newsContainer.appendChild(instructionText);
+
+        // Artikel för nyhetsinlägget
+        const articleEl = document.createElement("article");
+        articleEl.classList.add("news-article");
+        newsContainer.appendChild(articleEl);
+
+        // Titel på nyhetsinlägget
+        const articleTitle = document.createElement("h4");
+        articleTitle.textContent = article.headline;
+        articleTitle.classList.add("article-title");
+        articleEl.appendChild(articleTitle);
+
+        // Inläggets innehåll
+        const articleContent = document.createElement("p");
+        articleContent.textContent = article.content;
+        articleContent.classList.add("article-content");
+        articleEl.appendChild(articleContent);
+
+        // Skapar div för att lägga till information om inlägget
+        const divEl = document.createElement("div");
+        divEl.classList.add("article-footer");
+        articleEl.appendChild(divEl);
+
+        // Skapar text för skribenten av nyhetsinlägget
+        const articleAuthor = document.createElement("p");
+        const spanAuthor = document.createElement("span");
+        articleAuthor.classList.add("article-author");
+        spanAuthor.classList.add("author-span");
+        spanAuthor.textContent = "Skribent: ";
+        articleAuthor.appendChild(spanAuthor);
+        articleAuthor.append(article.author);
+        divEl.appendChild(articleAuthor);
+
+        // Skapar utskrift för datum och tid när nyhetsinlägget skapades
+        const articleDate = document.createElement("p");
+        const spanDate = document.createElement("span");
+        articleDate.classList.add("article-date");
+        spanDate.classList.add("date-span");
+        spanDate.textContent = "Publicerat: ";
+        articleDate.appendChild(spanDate);
+        const datePublish = new Date(article.created.raw);
+        const swedishTime = datePublish.toLocaleTimeString("se-SV", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+        articleDate.append(`${article.created.date} kl: ${swedishTime}`);
+        divEl.appendChild(articleDate);
+
+        //Skapar div för knapparna
+        const divButtons = document.createElement("div");
+        divButtons.classList.add("button-news");
+        divEl.appendChild(divButtons);
+
+        // Skapar radera-knapp
+        const deleteNewsBtn = document.createElement("button");
+        deleteNewsBtn.type = "button";
+        deleteNewsBtn.dataset.id = `${article.id}`;
+        deleteNewsBtn.classList.add("delete-news-btn");
+        deleteNewsBtn.textContent = "Radera";
+
+        // Skapar uppdatera-knapp
+        const updateNewsBtn = document.createElement("button");
+        updateNewsBtn.type = "button";
+        updateNewsBtn.dataset.id = `${article.id}`;
+        updateNewsBtn.classList.add("update-news-btn");
+        updateNewsBtn.textContent = "Uppdatera";
+
+        // Lägger till knapparna i diven
+        divButtons.appendChild(updateNewsBtn);
+        divButtons.appendChild(deleteNewsBtn);
+    });
+}
+
+/**
+ *  Hämtar specifikt nyhetsinlägg genom id från backend, används för att fylla i formuläret med data för att uppdatera inlägg
+ * @param {*} id - Inläggets id
+ * @returns {object} - Returnerar inläggets info, som hämtats från backend
+ */
+async function fetchNewsById(id) {
+    const token = fetchToken(); // Token används för att se om användaren är behörig
+    // Försöker hämta bild genom id
+    try {
+        const response = await fetch(`${url}/dinner/category-images/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        // Misslyckad respons
+        if (!response.ok) {
+            throw new Error("Kunde inte hämta den specifika bilden...");
+        }
+        // Lyckad respons returnerar den specifika bildens info
+        const fetchedImage = await response.json();
+        return fetchedImage;
+    } catch (error) {
+        console.error("Det gick inte att hämta den specifika bilden:", error);
+        throw error;
+    }
+}
+
+/**
+ * Fyller i formuläret med data från backend till ett inlägg för att kunna uppdatera
+ * @param {*} newsInfo - Data för inlägget som ska uppdateras, hämtas från backend
+ */
+function fillUpdatedNewsForm(newsInfo) {
+
+    // Inputs
+    const categoryInput = document.getElementById("image-category");
+    const altInput = document.getElementById("image-name");
+
+    // Formuläret för en bild blir ifylld med data från backend
+    categoryInput.value = imageInfo.category;
+    altInput.value = imageInfo.alt;
+
+    // Inaktiverar inputen om användaren ska uppdatera en bilds information
+    const imageFileInput = document.getElementById("image-file");
+    imageFileInput.disabled = true;
+
+    // Uppdaterar labeln för inputen när bildfilen inte kan bifogas eftersom det är en uppdatering
+    const imageFileLabel = document.querySelector("label[for='image-file']");
+    imageFileLabel.textContent = "Bilden kan inte ändras vid uppdatering";
+    imageFileLabel.style.color = "red";
+    imageFileLabel.style.fontWeight = "bold";
+    imageFileLabel.style.fontSize = "0.9em";
+}
+
+/**
+ * Tar bort nyhetsinlägg från databasen
+ * @param {*} id - Id för inlägget som ska raderas
+ * @returns {boolean} - Returnerar true om inlägget lyckades raderas
+ */
+async function deleteNewsArticle(id) {
+    const token = fetchToken(); // Kollar om token finns för att använda i anropet
+    const newsForm = document.getElementById("add-news-form");
+    const errorMsgList = newsForm.querySelector(".error-message ul");
+    try {
+        const response = await fetch(`${url}/news/${id}`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        // Om man inte är behörig -> token har gått ut
+        if (response.status === 401 || response.status === 403) {
+            displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+            return;
+        }
+        // Om man inte fick en respons
+        if (!response.ok) {
+            displayErrorMsg(["Kunde inte radera inlägget, prova igen..."], errorMsgList);
+        }
+        const data = await response.json();
+        return true;
+    } catch (error) {
+        // Om servern inte svarar eller inte går att ansluta till
+        if (error.message === "timeout") {
+            displayErrorMsg(["Servern svarar inte, prova igen strax..."], errorMsgList);
+            return;
+        } else if (error.message === "Failed to fetch") {
+            displayErrorMsg(["Kunde inte ansluta till servern, kontrollera att backend är igång..."], errorMsgList);
+            return;
+        }
+        displayErrorMsg(["Oväntat fel. Försök igen om en stund!"], errorMsgList);
+        console.error("Det gick inte att radera inlägget:", error);
+        throw error;
+    }
 }
 
 /**
@@ -1762,6 +2059,57 @@ function fillUpdatedImageForm(imageInfo) {
     imageFileLabel.style.fontSize = "0.9em";
 }
 
+
+/**
+ * Lyssnar på knapparna för att radera och uppdatera ett nyhetsinlägg
+ */
+function listenNewsBtns() {
+    // Formuläret på nyhetssidan
+    const newsForm = document.getElementById("add-news-form");
+
+    // Sektion inom nyhetssidan
+    const newsContainer = document.getElementById("news-container");
+
+    document.addEventListener("click", async(event) => {
+        const target = event.target;
+
+        // Om det man klickat på är delete-knapp
+        if (target.classList.contains("delete-news-btn")) {
+            const confirmMsg = confirm("Är du säker på att du vill radera inlägget?") // Bekräftelse innan raderingen görs
+            if (!confirmMsg) return;
+            const deleteBtnId = target.dataset.id; // Knappens dataset-id 
+            const successOk = await deleteNewsArticle(deleteBtnId); // Anropar funktionen med id som argument
+
+            if (successOk) {
+                target.closest(".news-article").remove(); // Tar bort artikeln från DOM
+                newsContainer.textContent = "Ingen nyhetsartikel tillagd än...";
+                resetNewsForm();
+            }
+        }
+
+        // För att uppdatera ett inlägg
+        else if (target.classList.contains("update-news-btn")) {
+
+            // Hämtar in ID från knappen och sparar till localstorage
+            const updateBtnId = target.dataset.id;
+            localStorage.setItem("news-id", updateBtnId);
+
+            // Tömmer
+            newsForm.querySelector(".success-message ul").innerHTML = "";
+            newsForm.querySelector(".error-message ul").innerHTML = "";
+
+            // Ändrar texterna för uppdatering
+            document.getElementById("news-form-title").textContent = "Uppdatera inlägget";
+            document.getElementById("add-news-btn").textContent = "Uppdatera inlägget";
+
+            // Sparar ned inläggets information genom id
+            const newsInfo = await fetchNewsById(updateBtnId);
+            fillUpdatedNewsForm(newsInfo); // Använder bildens info för att fylla i formuläret
+            newsForm.scrollIntoView({ behavior: "smooth" }); // Skrollar till formuläret
+        }
+    });
+}
+
 /**
  * Resettar formuläret för en middagsmaträtt
  */
@@ -1823,7 +2171,7 @@ function resetImageForm() {
 
 function resetNewsForm() {
     // Formuläret
-    const newsForm = document.getElementById("news-form");
+    const newsForm = document.getElementById("add-news-form");
 
     // Inputs
     document.getElementById("news-headline").value = "";

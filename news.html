@@ -32,6 +32,8 @@
         <h1>Nyhetsinlägg</h1>
         <form id="add-news-form" method="post">
             <h2 id="news-form-title">Skriv inlägg</h2>
+            <button id="reset-news-form-btn" class="reset-btn" type="button"><span
+                    class="material-symbols-outlined">restart_alt</span></button>
             <div class="error-message">
                 <ul></ul>
             </div>
@@ -54,9 +56,11 @@
             </div>
             <button id="add-news-btn" type="submit">Publicera</button>
         </form>
-        <article>
+
+        <section id="news-container">
             <!-- Skriva ut nyhetsinlägg här -->
-        </article>
+
+        </section>
     </main>
     <footer id="footer">
         <p> Admin-sida för Trattoria Lema</p>

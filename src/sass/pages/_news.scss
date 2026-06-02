@@ -2,8 +2,9 @@
 @use "../abstracts/variables" as *;
 @use "./login" as *;
 #add-news-form {
+    position: relative;
     @extend #login-form;
-    background-color: rgb(96, 203, 230);
+    background-color: rgb(126, 215, 238);
     input {
         padding: 0.5em;
         border-radius: 4px;
@@ -14,10 +15,108 @@
         overflow: hidden;
         resize: vertical;
     }
+    .error-message {
+        color: rgb(173, 2, 2);
+    }
 }
 
-@media screen and (max-width: 900px) {}
+#news-container {
+    margin: 2em 0em 2em;
+    max-width: 700px;
+    width: 100%;
+    border-radius: 16px;
+    padding: 2em;
+    background-color: rgb(219, 219, 219);
+    h2 {
+        color: rgb(1, 29, 20);
+        margin-bottom: 0.8em;
+    }
+}
 
-@media screen and (max-width: 425px) {}
+.news-article {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    margin: 0 auto;
+    width: 100%;
+    border-left: 4px solid #fa8e00;
+    margin-bottom: 2em;
+    background-color: white;
+    box-shadow: 0 0 12px 2px black;
+    border-radius: 6px;
+    padding: 1.5em;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    .article-title {
+        text-align: center;
+        margin-bottom: 0.5em;
+        font-size: 1.4em;
+    }
+    .article-content {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        width: 100%;
+        word-wrap: break-word;
+        max-width: 65ch;
+        white-space: pre-wrap;
+        line-height: 1.1;
+    }
+    .article-date {
+        font-size: 0.9em;
+        color: rgb(61, 60, 60);
+    }
+    .button-news {
+        margin-top: 1em;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5em;
+    }
+}
+
+.article-footer {
+    border-top: 1px solid #8a8888;
+    padding-top: 0.5em;
+}
+
+.news-headline {
+    text-align: center;
+    font-size: 1.5em;
+    color: rgb(1, 29, 20);
+    margin-bottom: 0.5em;
+}
+
+.news-instruction {
+    text-align: center;
+    font-size: 1.1em;
+    color: rgb(1, 29, 20);
+    margin-bottom: 1.5em;
+}
+
+.article-author {
+    font-size: 0.9em;
+    color: rgb(61, 60, 60);
+    margin-top: 0.5em;
+    .author-span {
+        font-weight: bold;
+        color: rgb(61, 60, 60);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #news-container {
+        padding: 0.2em;
+    }
+    .news-article {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 475px) {
+    #news-container {
+        border-radius: 0;
+    }
+}
 
 @media screen and (max-width: 340px) {}

@@ -1,5 +1,6 @@
+@use "../abstracts/variables" as *;
 body {
-    font-family: "Manrope", sans-serif;
+    font-family: $font-family-primary;
     background-color: #f0ba2444;
     min-height: 100vh;
     display: flex;

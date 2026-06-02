@@ -59,11 +59,13 @@
     @include cta-page-btn($btn-color-primary, $color-text-light);
 }
 
-.delete-dinner-btn {
+.delete-dinner-btn,
+.delete-news-btn {
     @include dishBtn($btn-color-dinner, $color-text-light);
 }
 
-.update-dinner-btn {
+.update-dinner-btn,
+.update-news-btn {
     @include dishBtn($btn-color-primary, $color-text-light);
 }
 
