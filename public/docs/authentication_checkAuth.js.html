@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: authentication/checkAuth.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,125 +17,61 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: authentication/checkAuth.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+checkAuthAccess();
 
+/**
+ * Autentiserar användare och kollar om den har behöriget för resten av webbplatsen
+ * @returns {void} - Returnerar ingenting
+ */
+export function checkAuthAccess() {
 
-    <h3> </h3>
+    // Sökvägen för användarens webbfönster just nu
+    const userPath = window.location.pathname;
 
+    // Routes som kräver inloggning
+    const protectedRoutes = [
+        "/index.html",
+        "/register.html",
+        "/dinner.html",
+        "/booking.html",
+        "/"
+    ]
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>main.js</h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description">Projektuppgift - Backend-baserad Webbutveckling DT207G<br>Webbplatsen är en admin-sida för den fiktiva "restaurangen" Trattoria Lema.<br>På denna sida kan personalen skapa och administrera sin kvällsmeny med bilder och maträtter. Funktionalitet för att uppdatera och radera innehållet finns med.<br>Förutom att administrera menyn kan personalen även se bokningar som gjorts på restaurangen och ta bort eller uppdatera dem.<br>Slutligen går det att administrera nyhetsinlägg.<br>Projektet är skapat med JavaScript, SCSS, HTML samt byggt med Vite och dokumenterat med JSDoc.<br></div>
-        
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    // Om man försöker navigerar till sida som inte är login och ingen key finns sparad
+    if (protectedRoutes.includes(userPath) &amp;&amp; !localStorage.getItem("login-key")) {
+        window.location.href = "login.html"; // Redirect till login-sidan
+    }
+    // Förhindrar att vanliga användare som personal kan navigera till registera-sidan
+    if (userPath === "/register.html" &amp;&amp; localStorage.getItem("role") !== "admin") {
+        return window.location.href = "index.html"; // Redirect till index-sidan
+    }
+    // Ändrar footerns utseende när man inte har behörigheten för admin
+    if ((userPath === "/index.html" || userPath === "/") &amp;&amp; localStorage.getItem("role") !== "admin") {
+        changeFooterText();
+    }
+}
+/**
+ * Ändrar footerns utseende och tar bort länk till registrera-sidan om man inte är inloggad som admin
+ */
+export function changeFooterText() {
+    const footer = document.getElementById("footer");
+    footer.innerHTML = "";
+    footer.innerHTML = `
+            &lt;p> Admin-sida för Osteria Lema&lt;/p>
+    `;
+}</code></pre>
+        </article>
+    </section>
 
 
 
