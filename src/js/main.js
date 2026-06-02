@@ -1722,7 +1722,7 @@ async function fetchNews() {
 
 /**
  * Skapar nyhetsartikel från inlägget som skapats och som lagras i databasen
- * @param {headline: string, content: string, author:string} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
+ * @param {{headline: string, content: string, author:string}} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
  * @returns {void} - Returnerar ingenting
  */
 async function renderNews(newsArticle) {
@@ -1872,7 +1872,7 @@ async function fetchNewsById(id) {
 
 /**
  * Fyller i formuläret med data från backend till ett inlägg för att kunna uppdatera
- * @param {headline: string, content: string, author: string} newsInfo - Data för inlägget som ska uppdateras, hämtas från backend
+ * @param {{headline: string, content: string, author: string}} newsInfo - Data för inlägget som ska uppdateras, hämtas från backend
  */
 function fillUpdatedNewsForm(newsInfo) {
     const newsForm = document.getElementById("add-news-form");

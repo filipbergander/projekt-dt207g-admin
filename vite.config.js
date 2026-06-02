@@ -11,7 +11,9 @@ export default defineConfig({
                 index: resolve(__dirname, "index.html"),
                 register: resolve(__dirname, "register.html"),
                 dinner: resolve(__dirname, "dinner.html"),
-                login: resolve(__dirname, "login.html")
+                login: resolve(__dirname, "login.html"),
+                news: resolve(__dirname, "news.html"),
+                booking: resolve(__dirname, "booking.html")
             }
         }
     }

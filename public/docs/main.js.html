@@ -812,7 +812,7 @@ async function fetchDinnerDishes() {
 }
 /**
  * Filtrerar maträtterna efter kategorier som finns inom kvällsmenyn, anropar sedan funktion för att rendera rätterna i DOM
- * @param {*} dinnerDishes 
+ * @param {Dishes[]} dinnerDishes 
  */
 async function filterDinnerDishes(dinnerDishes) {
 
@@ -836,7 +836,7 @@ async function filterDinnerDishes(dinnerDishes) {
 }
 /**
  * Filtrerar bilderna efter kategorier som finns för bilderna, samma som maträtterna, anropar sedan funktion för att rendera bilderna i DOM
- * @param {*} dataImages - Bilderna med sin data som hämtats in från backend
+ * @param {categoryImage[]} dataImages - Bilderna med sin data som hämtats in från backend
  */
 async function filterDinnerImages(dataImages) {
     // Filtrerar efter kategorier som finns för bilderna, samma som maträtter
@@ -859,7 +859,7 @@ async function filterDinnerImages(dataImages) {
 }
 /**
  *  Hämtar specifik bild genom id från backend, används för att fylla i formuläret med data för att uppdatera en bild
- * @param {*} id - Den specifika bildens id
+ * @param {string} id - Den specifika bildens id
  * @returns {object} - Returnerar den specifika bildens info, som hämtats från backend
  */
 async function fetchImageById(id) {
@@ -905,7 +905,7 @@ async function fetchImageById(id) {
 }
 /**
  * Hämtar specifik maträtt från backend, används för att fylla i formuläret med data för att uppdatera en maträtt
- * @param {*} id - Den specifika maträttens id från backend
+ * @param {string} id - Den specifika maträttens id från backend
  * @returns {object} - Returnerar den specifika maträttens info, som hämtats från backend
  */
 async function fetchDinnerById(id) {
@@ -953,8 +953,8 @@ async function fetchDinnerById(id) {
 
 /**
  * Skriver ut maträtterna efter sin kategori
- * @param {*} container - Elementet för respektive kategori där maträtterna ska skrivas ut inom
- * @param {*} dinnerDishes - Maträtterna
+ * @param {HTMLElement} container - Elementet för respektive kategori där maträtterna ska skrivas ut inom
+ * @param {Dinner[]} dinnerDishes - Maträtterna
  * @returns {void} - Returnerar ingenting
  */
 async function renderCategoryDish(container, dinnerDishes) {
@@ -1006,7 +1006,7 @@ async function renderCategoryDish(container, dinnerDishes) {
 }
 /**
  * Tar bort en rätt från middagsmenyn
- * @param {*} id - Id på den specifika maträtten som ska raderas
+ * @param {string} id - Id på den specifika maträtten som ska raderas
  */
 async function deleteDinnerDish(id) {
     const token = fetchToken(); // Kollar om token finns för att använda i anropet
@@ -1032,7 +1032,7 @@ async function deleteDinnerDish(id) {
 }
 /**
  * Uppdaterar en rätt från kvällsmenyn
- * @param {*} id - Id på den specifika maträtten som ska uppdateras
+ * @param {string} id - Id på den specifika maträtten som ska uppdateras
  */
 async function updateDinnerDish(id) {
     const token = fetchToken(); // Hämtar token
@@ -1074,7 +1074,7 @@ async function updateDinnerDish(id) {
 
 /**
  * Uppdaterar en bilds information, alt-text/kategori, i backend
- * @param {*} id - Bildens id som ska uppdateras
+ * @param {string} id - Bildens id som ska uppdateras
  * @returns {object} - Den uppdaterade bildens information
  */
 async function updateCategoryImage(id) {
@@ -1119,7 +1119,7 @@ async function updateCategoryImage(id) {
 
 /**
  * Uppdaterar ett nyhetsinläggs information, rubrik/innehåll/författare, i backend
- * @param {*} id - Inläggets id som ska uppdateras
+ * @param {string} id - Inläggets id som ska uppdateras
  * @returns {object} - Det uppdaterade inläggets information
  */
 async function updateNews(id) {
@@ -1197,7 +1197,7 @@ async function updateNews(id) {
 
 /**
  * Tar bort en kategoribild från databasen
- * @param {*} id - Id för bilden som ska raderas
+ * @param {string} id - Id för bilden som ska raderas
  * @returns {boolean} - Returnerar true om bilden lyckas raderas
  */
 async function deleteCategoryImage(id) {
@@ -1326,8 +1326,8 @@ async function createNewImage() {
 
 /**
  * Renderar bilderna efter kategori i DOM
- * @param {*} container - Container för varje kategori av maträtt som bilderna ska skrivas ut inom
- * @param {*} categoryImages - Bilderna filtrerade efter sin kategori
+ * @param {HTMLElement} container - Container för varje kategori av maträtt som bilderna ska skrivas ut inom
+ * @param {categoryImage[]} categoryImages - Bilderna filtrerade efter sin kategori
  * @returns {void} - Returnerar ingenting
  */
 async function renderCategoryImages(container, categoryImages) {
@@ -1438,7 +1438,7 @@ async function fetchBookings() {
 
 /**
  * Renderar bokningar som gjorts i DOM
- * @param {*} bookings - Bokningar som gjorts och hämtats in från backend
+ * @param {Booking[]} bookings - Bokningar som gjorts och hämtats in från backend
  * @returns {void} - Returnerar ingenting
  */
 async function renderBookings(bookings) {
@@ -1605,9 +1605,9 @@ async function renderBookings(bookings) {
 
 /**
  * Uppdaterar klass på bokningsartiklarna beroende på status i selectboxen
- * @param {*} article - Artikel-elementet för varje bokning
- * @param {*} select - Selectboxen för varje artikel-element
- * @param {*} bookingStatus - Statusen som väljs som option i selectboxen, godkänd, nekad eller ej hanterad -> approved, declined, pending
+ * @param {HTMLElement} article - Artikel-elementet för varje bokning
+ * @param {HTMLSelectElement} select - Selectboxen för varje artikel-element
+ * @param {string} bookingStatus - Statusen som väljs som option i selectboxen, godkänd, nekad eller ej hanterad -> approved, declined, pending
  */
 function updateBookingClass(article, select, bookingStatus) {
     // Tar bort tidigare klasser
@@ -1630,7 +1630,7 @@ function updateBookingClass(article, select, bookingStatus) {
 }
 /**
  * Raderar en bokning genom sitt id i backend
- * @param {*} id - Id på den specifika bokningen som ska raderas
+ * @param {string} id - Id på den specifika bokningen som ska raderas
  */
 async function deleteBooking(id) {
     const token = fetchToken(); // Kollar om token finns för att använda i anropet
@@ -1701,7 +1701,7 @@ async function listenBookingDeleteBtn() {
 }
 /**
  * Tar bort bokningens status från localStorage när den raderas från DOM och backend
- * @param {*} id - Bokningens id
+ * @param {string} id - Bokningens id
  */
 function deleteBookingFromLocalStorage(id) {
     localStorage.removeItem(`bokning-${id}`);
@@ -1750,7 +1750,7 @@ async function fetchNews() {
 
 /**
  * Skapar nyhetsartikel från inlägget som skapats och som lagras i databasen
- * @param {*} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
+ * @param {{headline: string, content: string, author:string}} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
  * @returns {void} - Returnerar ingenting
  */
 async function renderNews(newsArticle) {
@@ -1849,7 +1849,7 @@ async function renderNews(newsArticle) {
 
 /**
  *  Hämtar specifikt nyhetsinlägg genom id från backend, används för att fylla i formuläret med data för att uppdatera inlägg
- * @param {*} id - Inläggets id
+ * @param {string} id - Inläggets id
  * @returns {object} - Returnerar inläggets info, som hämtats från backend
  */
 async function fetchNewsById(id) {
@@ -1900,7 +1900,7 @@ async function fetchNewsById(id) {
 
 /**
  * Fyller i formuläret med data från backend till ett inlägg för att kunna uppdatera
- * @param {*} newsInfo - Data för inlägget som ska uppdateras, hämtas från backend
+ * @param {{headline: string, content: string, author: string}} newsInfo - Data för inlägget som ska uppdateras, hämtas från backend
  */
 function fillUpdatedNewsForm(newsInfo) {
     const newsForm = document.getElementById("add-news-form");
@@ -1919,7 +1919,7 @@ function fillUpdatedNewsForm(newsInfo) {
 
 /**
  * Tar bort nyhetsinlägg från databasen
- * @param {*} id - Id för inlägget som ska raderas
+ * @param {string} id - Id för inlägget som ska raderas
  * @returns {boolean} - Returnerar true om inlägget lyckades raderas
  */
 async function deleteNewsArticle(id) {
@@ -1961,8 +1961,8 @@ async function deleteNewsArticle(id) {
 
 /**
  * Skriver ut felmeddelanden i DOM
- * @param {*} errors - Felmeddelanden som skapats i frontend
- * @param {*} UlElement - Elementen i DOM där felmeddelanden ska visas
+ * @param {string[]} errors - Felmeddelanden som skapats i frontend
+ * @param {HTMLUListElement} UlElement - Elementen i DOM där felmeddelanden ska visas
  */
 function displayErrorMsg(errors, UlElement) {
     UlElement.innerHTML = ""; // Tömmer tidigare felmeddelanden
@@ -1975,8 +1975,8 @@ function displayErrorMsg(errors, UlElement) {
 
 /**
  * Skapar och visar felmeddelanden som lagras i webbtjänsten till webbplatsens gränssnitt
- * @param {*} errors - Felmeddelanden från backend
- * @param {*} UlElement - Elementen i DOM där felmeddelanden ska visas
+ * @param {string[]} errors - Felmeddelanden från backend
+ * @param {HTMLUListElement} UlElement - Elementen i DOM där felmeddelanden ska visas
  */
 function showError(errors, UlElement) {
     UlElement.innerHTML = ""; // Tömmer tidigare felmeddelanden
@@ -1989,8 +1989,8 @@ function showError(errors, UlElement) {
 
 /**
  * För att visa "lyckade" meddelanden i DOM när formulär blir submittade
- * @param {*} messages - Meddelanden från backend eller egna
- * @param {*} UlElement - Elementen i DOM där meddelanden ska visas
+ * @param {string[]} messages - Meddelanden från backend eller egna
+ * @param {HTMLUListElement} UlElement - Elementen i DOM där meddelanden ska visas
  */
 function displaySuccessMsg(messages, UlElement) {
     UlElement.innerHTML = ""; // Tömmer först tidigare meddelanden
@@ -2209,7 +2209,7 @@ function listenImageBtns() {
 }
 /**
  * Fyller i formuläret med data från backend för en specifik maträtt -> uppdatera
- * @param {*} dishIfo - Data för den specifika maträtten som ska uppdateras, hämtas från backend
+ * @param {{category: string, name: string, price:number, description:string}} dishIfo - Data för den specifika maträtten som ska uppdateras, hämtas från backend
  */
 function fillUpdatedDishForm(dishIfo) {
     // Input i formuläret
@@ -2227,7 +2227,7 @@ function fillUpdatedDishForm(dishIfo) {
 
 /**
  * Fyller i formuläret med data från backend för en specifik bild för att uppdatera
- * @param {*} imageInfo - Data för den specifika bilden som ska uppdateras, hämtas från backend
+ * @param {{category: string, alt: string}} imageInfo - Data för den specifika bilden som ska uppdateras, hämtas från backend
  */
 function fillUpdatedImageForm(imageInfo) {
 
@@ -2407,7 +2407,7 @@ function fetchToken() {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Jun 02 2026 16:17:56 GMT+0200 (centraleuropeisk sommartid)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Jun 02 2026 16:50:31 GMT+0200 (centraleuropeisk sommartid)
 </footer>
 
 <script> prettyPrint(); </script>
