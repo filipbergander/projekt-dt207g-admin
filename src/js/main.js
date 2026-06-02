@@ -1434,8 +1434,8 @@
       bookingList.innerHTML = ""; // Tömmer innan nya bokningar skapas
 
       // Lägger till text till h2-rubriken på boknings-sidan
-      const headline = document.querySelector(".booking-headline");
-      headline.textContent = "Alla bokningar som blivit gjorda";
+      /*const headline = document.querySelector(".booking-headline");
+      headline.textContent = "Alla bokningar som blivit gjorda";*/
 
       // Skapar en beskrivning/instruktion av bokningarna
       const instructionText = document.querySelector(".booking-instruction");
