@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <!-- Header och navigering till startsidan -->
     <header>
         <a href="index.html" class="logo">Trattoria
             Lema</a>
@@ -19,6 +20,7 @@
             </ul>
         </nav>
     </header>
+    <!-- Brödsmulor -->
     <div class="sub-header">
         <nav aria-label="Navigering för brödsmulor">
             <ol class="breadcrumbs">
@@ -27,13 +29,16 @@
             </ol>
         </nav>
     </div>
+    <!-- Registreringformulär med inputs för ny användare -->
     <main class="register-main">
         <h1>Registrera användare</h1>
         <form id="register-form" method="post">
             <h2>Ny användare</h2>
+            <!-- Felmeddelanden visas nedanför-->
             <div class="error-message">
                 <ul></ul>
             </div>
+            <!-- "Lyckade meddelanden visas här med laddningsikon" -->
             <div class="success-message">
                 <ul></ul><span class="loading-spinner hidden"></span>
             </div>
@@ -63,6 +68,7 @@
                 </span></button>
         </form>
     </main>
+    <!-- Footer med länk till registreringssidan -->
     <footer id="footer">
         <p> Admin-sida för Trattoria Lema</p>
         <a href="register.html">Registrera användare</a>

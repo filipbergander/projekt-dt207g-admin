@@ -1,3 +1,4 @@
+// Mixins främst för knappar inom webbplatsen
 @use "variables" as *;
 @mixin button($btn-color-primary, $color-text) {
     color: $color-text;
@@ -19,6 +20,7 @@
     }
 }
 
+// Startsidans knappar
 @mixin admin-btn($btn-color-primary, $color-text) {
     color: $color-text;
     background-color: $btn-color-primary;
@@ -75,6 +77,7 @@
     }
 }
 
+// Knapparna för att deleta/uppdatera rätter
 @mixin dishBtn($btn-color-primary, $color-text) {
     color: $color-text;
     background-color: $btn-color-primary;
@@ -103,6 +106,7 @@
     }
 }
 
+// Knapparna för att deleta/uppdatera bokningar
 @mixin bookingBtn($btn-delete, $color-text) {
     color: $color-text;
     background-color: $btn-delete;

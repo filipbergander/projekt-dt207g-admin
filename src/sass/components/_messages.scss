@@ -1,3 +1,4 @@
+// Styling för olika meddelanden som visas på sidan och genom DOM
 @use "../abstracts/animations" as *;
 .error-message {
     color: rgb(207, 2, 2);
@@ -9,6 +10,7 @@
     }
 }
 
+// Lyckade meddelanden vid ex submits
 .success-message {
     display: flex;
     align-items: center;
@@ -21,6 +23,7 @@
     color: blue;
 }
 
+// Välkomstmeddelande som visas när admin loggar in, ruta
 #admin-user {
     background: #2b2b2c;
     padding: clamp(0.75em, 1vw, 0.75em) clamp(0.75em, 1.5vw, 1.5em);

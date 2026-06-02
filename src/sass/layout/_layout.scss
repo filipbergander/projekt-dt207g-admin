@@ -1,3 +1,5 @@
+// Generell styling
+// Main som finns på alla sidor
 main {
     flex: 1;
     min-height: 100%;
@@ -6,6 +8,7 @@ main {
     text-align: center;
 }
 
+// Startsidan, med "knappar" för navigering -> grid
 .admin-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

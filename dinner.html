@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <!-- Header och navigering till startsidan -->
     <header>
         <a href="index.html" class="logo">Trattoria
             Lema</a>
@@ -19,6 +20,7 @@
             </ul>
         </nav>
     </header>
+    <!--Brödsmulor-->
     <div class="sub-header">
         <nav aria-label="Navigering för brödsmulor">
             <ol class="breadcrumbs">
@@ -27,6 +29,7 @@
             </ol>
         </nav>
     </div>
+    <!--Knappar för att växla mellan innehållet på sidan, maträtter/bilder-->
     <main class="dish-main">
         <h1>Kvällsmeny</h1>
         <div class="dinner-btns-container">
@@ -43,18 +46,21 @@
                 Bilder
             </button>
         </div>
+        <!--Formulär för att lägga till ny maträtt och dryck-->
         <section id="new-dish-container" class="dish-container hidden">
             <form id="new-dish-form" method="post">
                 <h2 id="dish-form-title">Lägg till maträtt</h2>
                 <button id="reset-form-btn" class="reset-btn" type="button"><span
                         class="material-symbols-outlined">restart_alt</span></button>
-
+                <!--Felmeddelanden-->
                 <div class="error-message">
                     <ul></ul>
                 </div>
+                <!--Lyckade meddelanden visas med ikon-->
                 <div class="success-message">
                     <ul></ul><span class="loading-spinner hidden"></span>
                 </div>
+                <!--Selectbox för kategorierna-->
                 <div class="input-area">
                     <label for="dish-category">Kategori</label>
                     <select id="dish-category" name="dish-category">
@@ -84,6 +90,7 @@
                 <button id="add-dish-btn" class="submit-dish-btn" type="submit">Lägg till maträtt</button>
             </form>
         </section>
+        <!--Maträtternas container, sorterade efter kategorier-->
         <section id="edit-dish-container" class="dish-container hidden">
             <h2>Hantera maträtter</h2>
             <p class="info-text">Se och hantera maträtter efter kategorier. Du kan även ta bort eller uppdatera dem.</p>
@@ -107,6 +114,7 @@
                 </section>
             </div>
         </section>
+        <!-- Formulär för att lägga till ny bild -->
         <section id="add-new-image-container" class="add-new-image-container hidden">
             <form id="add-image-form" method="post">
                 <h2 id="image-form-title">Lägg till bild</h2>
@@ -119,7 +127,7 @@
                 <div class="success-message">
                     <ul></ul><span class="loading-spinner hidden"></span>
                 </div>
-
+                <!--Selectbox för kategorierna-->
                 <div class="input-area">
                     <label for="image-category">Kategori för bilden</label>
                     <select id="image-category" name="image-category">
@@ -130,7 +138,7 @@
                     <option value="Dryck">Dryck</option>
                 </select>
                 </div>
-
+                <!--Importera bildfilen-->
                 <div class="input-area">
                     <label for="image-file">Välj bild</label>
                     <input type="file" id="image-file" name="image-file" accept="image/jpeg, image/png, image/gif">
@@ -144,6 +152,7 @@
                 <button id="add-image-btn" class="submit-image-btn" type="submit">Lägg till bild</button>
             </form>
         </section>
+        <!-- Bildcontainer med kategorier efter maträtterna-->
         <section id="image-container" class="image-container hidden">
             <h2>Bilder</h2>
             <p class="info-text">Se och hantera bilder för kategorierna. Du kan ta bort dem eller uppdatera bildens alt-text och kategori.</p>
@@ -168,6 +177,7 @@
             </div>
         </section>
     </main>
+    <!-- Footer med länk till registreringssidan -->
     <footer id="footer">
         <p> Admin-sida för Trattoria Lema</p>
         <a href="register.html">Registrera användare</a>

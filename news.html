@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <!-- Header och navigering till startsidan -->
     <header>
         <a href="index.html" class="logo">Trattoria
             Lema</a>
@@ -20,6 +21,7 @@
             </ul>
         </nav>
     </header>
+    <!-- Brödsmulor -->
     <div class="sub-header">
         <nav aria-label="Navigering för brödsmulor">
             <ol class="breadcrumbs">
@@ -28,15 +30,19 @@
             </ol>
         </nav>
     </div>
+    <!-- Formulär för att skapa ett nyhetsinlägg -->
     <main class="news-main">
         <h1>Nyhetsinlägg</h1>
         <form id="add-news-form" method="post">
             <h2 id="news-form-title">Skriv inlägg</h2>
+            <!-- Reset-knapp som anropar funktion i JS för att resetta forumläret-->
             <button id="reset-news-form-btn" class="reset-btn" type="button"><span
                     class="material-symbols-outlined">restart_alt</span></button>
+            <!--Felmeddelanden visas nedanför-->
             <div class="error-message">
                 <ul></ul>
             </div>
+            <!--Lyckade meddelanden visas med ikon-->
             <div class="success-message">
                 <ul></ul><span class="loading-spinner hidden"></span>
             </div>
@@ -58,10 +64,11 @@
         </form>
 
         <section id="news-container">
-            <!-- Skriva ut nyhetsinlägg här -->
+            <!-- Skriva ut nyhetsinlägg här genom JS -->
 
         </section>
     </main>
+    <!-- Footer med länk till registreringssidan -->
     <footer id="footer">
         <p> Admin-sida för Trattoria Lema</p>
         <a href="register.html">Registrera användare</a>

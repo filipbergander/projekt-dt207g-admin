@@ -10,33 +10,38 @@
 </head>
 
 <body>
+    <!-- Header och navigering till startsidan -->
     <header>
         <a href="index.html" class="logo">Trattoria
             Lema</a>
         <nav>
             <ul class="nav-list">
-                <li><a href="index.html" class="home-link"><span class="material-symbols-outlined">home</span>Start</a></li>
+                <li><a href="index.html" class="home-link"><span class="material-symbols-outlined">home</span>Start</a>
+                </li>
                 <li><button id="logout-button">Logga ut</button></li>
             </ul>
         </nav>
     </header>
+    <!--Dashboard för personal med länkar till undersidor-->
     <main class="admin-main">
         <h1>Dashboard</h1>
         <div id="admin-user"></div>
         <section class="admin-container">
+            <!--Bokningssidan-->
             <a href="booking.html" class="cta-btn-booking">
                 <span class="material-symbols-outlined">dine_heart</span> Se bokningar
             </a>
-
+            <!--Sidan för kvällsmeny med bilder och maträtter-->
             <a href="dinner.html" class="cta-btn-dinner">
                 <span class="material-symbols-outlined">local_dining</span> Kvällsmeny
             </a>
-
+            <!-- Sidan för nyhetsinläggen -->
             <a href="news.html" class="cta-btn-news">
                 <span class="material-symbols-outlined">newspaper</span> Nyhetsinlägg
             </a>
         </section>
     </main>
+    <!-- Footer med länk till registreringssidan -->
     <footer id="footer">
         <p> Admin-sida för Trattoria Lema</p>
         <a href="register.html">Registrera användare</a>

@@ -1,6 +1,8 @@
+// Nyhetssidan
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 @use "./login" as *;
+// Nyhetssidans huvudinnehåll
 .news-main {
     width: 100%;
     max-width: 1200px;
@@ -10,6 +12,7 @@
     align-items: center;
 }
 
+// Formuläret för att lägga till en nyhet
 #add-news-form {
     position: relative;
     @extend #login-form;
@@ -32,6 +35,7 @@
     }
 }
 
+// Huvudinnehållet för varje nyhetsartikel
 #news-container {
     margin: 2em 0em 2em;
     max-width: 700px;
@@ -45,6 +49,7 @@
     }
 }
 
+// Varje nyhetsartikel
 .news-article {
     display: flex;
     flex-direction: column;
@@ -88,6 +93,7 @@
     }
 }
 
+// Artikelns footer med en border ovanför för att skilja på innehållet
 .article-footer {
     border-top: 1px solid #8a8888;
     padding-top: 0.5em;
@@ -107,6 +113,7 @@
     margin-bottom: 1.5em;
 }
 
+// Författarens namn som rubrik 
 .article-author {
     font-size: 0.9em;
     color: rgb(61, 60, 60);
@@ -159,5 +166,3 @@
         border-radius: 0;
     }
 }
-
-@media screen and (max-width: 340px) {}

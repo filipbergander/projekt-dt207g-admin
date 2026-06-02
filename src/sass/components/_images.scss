@@ -1,4 +1,6 @@
+// Styling för bilder inom kvällsmenyn
 @use "../pages/dinner" as *;
+// Container för alla bilder
 #image-container {
     margin: 2em auto 3em;
     padding: 1em 3em 2em;
@@ -8,6 +10,7 @@
     background-color: #ffffff;
 }
 
+// Listan med alla bilder -> gridlayout
 .images-list {
     display: grid;
     gap: 2em;
@@ -21,6 +24,7 @@
     }
 }
 
+// Varje "bildartikel" i bildlistan
 .image-article {
     @extend .dinner-article;
     background-color: #d0d0d0;
@@ -48,6 +52,7 @@
     }
 }
 
+// Formuläret för att lägga till ny bild
 #add-image-form {
     @extend #new-dish-form;
     background-color: #f0aae1be;
@@ -58,11 +63,13 @@
     }
 }
 
+// Container som finns kring formuläret för att lägga till en ny bild
 #add-new-image-container {
     @extend #new-dish-container;
     background-color: rgba(240, 186, 36, 0);
 }
 
+// Knapparna som finns för att uppdatera/radera bild
 .image-row-btns {
     @extend .dish-row-btns;
     justify-content: center;

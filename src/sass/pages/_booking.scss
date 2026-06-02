@@ -1,4 +1,5 @@
-@use "../abstracts/mixins" as *;
+// Sidan för bokningar
+@use "../abstracts/mixins" as *; // Imports
 @use "../abstracts/variables" as *;
 .booking-section {
     background-color: rgb(255, 250, 243);
@@ -7,12 +8,14 @@
     border-radius: 12px;
 }
 
+// Grid-layout på "bokningsartiklarna"
 .booking-container {
     display: grid;
     gap: 2em;
     grid-template-columns: repeat(2, 1fr);
 }
 
+// Innehållet i varje bokningsartikel
 .booking-information {
     display: flex;
     flex-direction: column;
@@ -28,6 +31,7 @@
     }
 }
 
+// Textinstruktion för bokningssidan
 .booking-instruction {
     margin: 0.5em auto;
     max-width: 60ch;
@@ -37,6 +41,7 @@
     line-height: 1.3;
 }
 
+// Varje bokningsartikel
 .booking-article {
     display: flex;
     flex-direction: column;
@@ -56,6 +61,7 @@
     }
 }
 
+// Rubriken på varje bokningsartikel
 .booking-header {
     display: flex;
     align-items: center;
@@ -76,6 +82,7 @@
     }
 }
 
+// Eventuella meddelanden som gästen lämnat i bokningen
 .booking-message {
     display: flex;
     flex-direction: column;
@@ -127,6 +134,7 @@
     }
 }
 
+// Status för bokningarna
 .booking-status {
     color: #000;
     background-color: rgb(255, 255, 255);
@@ -140,6 +148,7 @@
     }
 }
 
+// Ändrar färg beroende på bokningens status
 .booking-article.approved {
     background-color: rgb(183, 247, 146);
 }

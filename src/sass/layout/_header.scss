@@ -1,3 +1,4 @@
+// Styling för headern
 @use "../abstracts/variables" as *;
 header {
     width: 100%;
@@ -26,6 +27,7 @@ header {
     }
 }
 
+// Länkarna
 header a {
     text-align: center;
     text-decoration: none;
@@ -48,6 +50,7 @@ header a {
     }
 }
 
+// Knappen för att navigera till -> hem
 .home-link {
     display: flex;
     flex-direction: column;
@@ -55,6 +58,7 @@ header a {
     gap: 0.1em;
 }
 
+// Logotypen
 .logo {
     display: flex;
     flex-direction: column;

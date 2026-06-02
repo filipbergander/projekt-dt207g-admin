@@ -1,4 +1,6 @@
+// Styling för ikoner och laddningsikoner/animationer
 @use "../abstracts/animations" as *;
+// Allmän laddningsikon som används på formulär 
 .loading-spinner {
     display: block;
     border: 4px solid rgb(255, 255, 255);
@@ -10,16 +12,19 @@
     margin: 0;
 }
 
+// Login som en pizza med animation, importerad
 #login-spinner {
     width: 30px;
     height: 30px;
     animation: rotateSpin 1.5s linear infinite;
 }
 
+// Döljer element när klassen läggs på
 .hidden {
     display: none;
 }
 
+// Knappen för att återställa formulär, med en roterande animation
 .reset-btn {
     position: absolute;
     top: 10px;
