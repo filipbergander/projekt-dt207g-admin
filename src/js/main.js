@@ -50,6 +50,7 @@
       // Om man är på den sidan med knappen
       if (formResetBtn) {
           formResetBtn.addEventListener("click", () => {
+              formResetBtn.offsetWidth;
               rotateDishIcon += -360; // Snurrar ett varv vid varje klick
               formResetBtn.style.transform = `rotate(${rotateDishIcon}deg)`; // Roterar ikonen varje gång ett varv
               resetDishForm(); // Resettar formuläret
@@ -58,6 +59,7 @@
       // Knappen för att resetta formuläret för bilder
       if (imageFormResetBtn) {
           imageFormResetBtn.addEventListener("click", () => {
+              imageFormResetBtn.offsetWidth;
               rotateImageIcon += -360; // Snurrar ett varv vid varje klick
               imageFormResetBtn.style.transform = `rotate(${rotateImageIcon}deg)`; // Roterar ikonen varje gång ett varv
               resetImageForm(); // Resettar formuläret
@@ -66,6 +68,7 @@
 
       if (newsFormResetBtn) {
           newsFormResetBtn.addEventListener("click", () => {
+              newsFormResetBtn.offsetWidth;
               rotateNewsIcon += -360;
               newsFormResetBtn.style.transform = `rotate(${rotateNewsIcon}deg)`;
               resetNewsForm();
@@ -332,7 +335,7 @@
 
               // Kollar om id för en post finns lagrat i localstorage, -> uppdatering av en bild
               if (ImageId) {
-                  addImageBtn.textContent = "Uppdatera bildens information";
+                  addImageBtn.textContent = "Uppdatera bildens info";
                   const result = await updateCategoryImage(ImageId);
 
                   if (result.error) {
@@ -1736,7 +1739,7 @@
 
   /**
    * Skapar nyhetsartikel från inlägget som skapats och som lagras i databasen
-   * @param {{headline: string, content: string, author:string}} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
+   * @param {{headline: string, content: string, author:string, createdAt:Date}} newsArticle - Nyhetsartikeln med information som skapats och sedan hämtats in från backend
    * @returns {void} - Returnerar ingenting
    */
   async function renderNews(newsArticle) {

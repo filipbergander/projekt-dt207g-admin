@@ -39,11 +39,9 @@
         font-size: 40px;
     }
     &:hover {
-        transform: scale(1.05);
         background: none;
     }
     &:active {
-        transform: rotate(360deg);
         background: none;
     }
 }
