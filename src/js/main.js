@@ -1659,9 +1659,9 @@
               const select = article.querySelector(".booking-status");
               const bookingStatus = select.value;
 
-              // Om man inte nekat bokningen så visas en alert
-              if (bookingStatus !== "declined") {
-                  alert("Du måste neka bokningen innan du kan radera den.");
+              // Om man inte "hanterat" (godkänd/nekad) bokningen så visas en alert
+              if (bookingStatus === "pending") {
+                  alert("Du måste hantera bokningen innan du kan radera den.");
                   return;
               }
               // När man ska radera en bokning först en confirm
