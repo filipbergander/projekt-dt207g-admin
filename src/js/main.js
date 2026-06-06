@@ -15,6 +15,7 @@
   import '../sass/main.scss'
   // Importerar funktioner från middleware 
   import { checkAuthAccess } from "./authentication/checkAuth.js";
+  import { notAuthorizedUser } from "./authentication/checkAuth.js";
   import { changeFooterText } from "./authentication/checkAuth.js";
 
   "use strict";
@@ -596,6 +597,17 @@
               },
               body: JSON.stringify({ username, email, password, role })
           });
+
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
+              return;
+          }
+
           const data = await response.json();
           // Vid misslyckat resultat
           if (!response.ok) {
@@ -663,6 +675,16 @@
               },
               body: JSON.stringify({ category, name, description, price })
           });
+
+          // Om något gick fel med behörigheten eller token har gått ut -> utloggning automatiskt
+          if (response.status === 401 || response.status === 403) {
+              displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
+              return;
+          }
+
           const data = await response.json();
           // Vid misslyckat resultat
           if (!response.ok) {
@@ -722,12 +744,16 @@
               },
               body: JSON.stringify({ headline, content, author })
           });
+
           const data = await response.json();
 
           // Om man inte är behörig -> token har gått ut
           if (response.status === 401 || response.status === 403) {
               loadingSpinner.classList.add("hidden"); // Visar ingen laddningsikon
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
 
@@ -865,6 +891,10 @@
           // Om något gick fel med behörigheten eller token har gått ut
           if (response.status === 401 || response.status === 403) {
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
 
@@ -910,6 +940,10 @@
           // Om något gick fel med behörigheten eller token har gått ut
           if (response.status === 401 || response.status === 403) {
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
 
@@ -1007,6 +1041,13 @@
                   'Authorization': 'Bearer ' + token
               }
           });
+
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              notAuthorizedUser();
+              return;
+          }
+
           // Om man inte fick en respons
           if (!response.ok) {
               throw new Error(`Det gick inte att radera maträtten från middagsmenyn`);
@@ -1055,6 +1096,12 @@
               },
               body: JSON.stringify(updateDinnerDish) // Data från formuläret skickas med i anropet
           });
+
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              notAuthorizedUser();
+              return;
+          }
       } catch (error) {
           console.error("Det gick inte att uppdatera den specifika maträtten:", error);
           throw error;
@@ -1098,6 +1145,12 @@
               },
               body: formData
           });
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              notAuthorizedUser();
+              return;
+          }
+
           const data = await response.json();
           return data;
       } catch (error) {
@@ -1153,9 +1206,14 @@
           });
 
           const data = await response.json();
-          // Felmeddelanden i DOM viD olika statuskoder
+
+          // Om något gick fel med behörigheten eller token har gått ut
           if (response.status === 401 || response.status === 403) {
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
 
@@ -1202,6 +1260,12 @@
           if (!response.ok) {
               throw new Error(`Det gick inte att radera bilden...`);
           }
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              notAuthorizedUser();
+              return;
+          }
+
           const data = await response.json();
           return true;
       } catch (error) {
@@ -1286,6 +1350,17 @@
               },
               body: imageData
           });
+
+          // Om något gick fel med behörigheten eller token har gått ut
+          if (response.status === 401 || response.status === 403) {
+              displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
+              return;
+          }
+
           const data = await response.json();
 
           // Vid misslyckat resultat
@@ -1383,10 +1458,13 @@
                   'Authorization': 'Bearer ' + token
               }
           });
-          // Felmeddelanden i DOM beroende på statuskod
+          // Felmeddelanden i DOM beroende på statuskod, -> loggar ut användaren om den inte är behörig
           if (response.status === 401 || response.status === 403) {
               bookingLoadingText.textContent = "Ingen behörighet, prova logga in igen...";
               bookingLoadingText.style.color = "#cf0202";
+              setTimeout(() => {
+                  notAuthorizedUser(); // Loggar ut användaren
+              }, 2000);
               return;
           }
 
@@ -1635,6 +1713,12 @@
           if (!response.ok) {
               throw new Error(`Det gick inte att radera bokningen...`);
           }
+
+          // Om något gick fel med behörigheten eller token har gått ut -> loggar ut användaren
+          if (response.status === 401 || response.status === 403) {
+              notAuthorizedUser(); // Loggar ut användaren
+              return;
+          }
           // Om raderingen lyckades
           const data = await response.json();
           return true;
@@ -1854,9 +1938,14 @@
                   'Authorization': 'Bearer ' + token
               }
           });
+
           // Om något gick fel med behörigheten eller token har gått ut
           if (response.status === 401 || response.status === 403) {
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
 
@@ -1922,9 +2011,13 @@
                   'Authorization': 'Bearer ' + token
               }
           });
-          // Om man inte är behörig -> token har gått ut
+          // Om något gick fel med behörigheten eller token har gått ut -> utloggning
           if (response.status === 401 || response.status === 403) {
               displayErrorMsg(["Ingen behörighet, prova logga in igen..."], errorMsgList);
+              errorMsgList.scrollIntoView({ behavior: "smooth" });
+              setTimeout(() => {
+                  notAuthorizedUser();
+              }, 2000);
               return;
           }
           // Om man inte fick en respons

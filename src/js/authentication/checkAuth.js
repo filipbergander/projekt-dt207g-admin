@@ -32,6 +32,18 @@ export function checkAuthAccess() {
         changeFooterText();
     }
 }
+
+/**
+ * Loggar ut en användare om den inte har behörighet
+ */
+export function notAuthorizedUser() {
+    // Tar bort från localstorage
+    localStorage.removeItem("login-key");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
+    window.location.href = "login.html"; // Redirectar användaren till login-sidan
+}
+
 /**
  * Ändrar footerns utseende och tar bort länk till registrera-sidan om man inte är inloggad som admin
  */
