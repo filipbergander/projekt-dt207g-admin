@@ -1,6 +1,10 @@
 // Allmän styling för hela webbplatsen
 @use "../abstracts/variables" as *;
 // Body inom hela webbplatsen, typsnitt och bakgrundsfärg
+html {
+    overflow-y: scroll;
+}
+
 body {
     font-family: $font-family-primary;
     background-color: #f0ba2444;
